@@ -14,7 +14,7 @@ public class SplashScreen extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        final Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        final Intent loginActivityIntent = new Intent(this, LoginActivity.class);
 
         Thread timer = new Thread(){
             public void run(){
@@ -23,7 +23,7 @@ public class SplashScreen extends ActionBarActivity {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
-                    startActivity(mainActivityIntent);
+                    startActivity(loginActivityIntent);
                 }
             }
         };
