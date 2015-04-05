@@ -5,6 +5,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/base_green"
     tools:context="com.storelocator.altaiezior.LoginActivity">
 
     <!-- Login progress -->
@@ -12,53 +13,93 @@
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="8dp" android:visibility="gone" />
 
-    <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
-            <com.google.android.gms.common.SignInButton android:id="@+id/plus_sign_in_button"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp" />
+        <LinearLayout android:id="@+id/plus_sign_out_buttons"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:visibility="gone" android:weightSum="2">
 
-            <LinearLayout android:id="@+id/plus_sign_out_buttons"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:visibility="gone" android:weightSum="2">
+            <Button android:id="@+id/plus_sign_out_button" style="?android:textAppearanceSmall"
+                android:layout_width="match_parent" android:layout_height="match_parent"
+                android:layout_weight="1" android:text="@string/plus_sign_out" />
 
-                <Button android:id="@+id/plus_sign_out_button" style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent" android:layout_height="match_parent"
-                    android:layout_weight="1" android:text="@string/plus_sign_out" />
+            <Button android:id="@+id/plus_disconnect_button"
+                style="?android:textAppearanceSmall" android:layout_width="match_parent"
+                android:layout_height="match_parent" android:layout_weight="1"
+                android:text="@string/plus_disconnect" />
 
-                <Button android:id="@+id/plus_disconnect_button"
-                    style="?android:textAppearanceSmall" android:layout_width="match_parent"
-                    android:layout_height="match_parent" android:layout_weight="1"
-                    android:text="@string/plus_disconnect" />
+        </LinearLayout>
 
-            </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start"
+                android:id="@+id/imageView"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1" />
 
             <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:orientation="vertical">
+                android:layout_height="wrap_content" android:orientation="vertical"
+                android:layout_weight="0">
 
                 <AutoCompleteTextView android:id="@+id/email" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress" android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/base_black"
+                    android:background="@android:color/white"
+                    android:padding="15dp"
+                    android:textColorHint="@color/base_black"
+                    android:theme="@style/AppTheme" />
 
                 <EditText android:id="@+id/password" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:hint="@string/prompt_password"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified" android:inputType="textPassword"
-                    android:maxLines="1" android:singleLine="true" />
+                    android:maxLines="1" android:singleLine="true"
+                    android:textColor="@color/base_black"
+                    android:padding="15dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/white"
+                    android:textColorHint="@color/base_black"
+                    android:theme="@style/AppTheme" />
 
-                <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp" android:text="@string/action_sign_in"
-                    android:textStyle="bold" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
+                        android:layout_width="match_parent" android:layout_height="match_parent"
+                        android:text="@string/action_sign_in"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:background="@color/base_black"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <com.google.android.gms.common.SignInButton android:id="@+id/plus_sign_in_button"
+                        android:layout_width="match_parent" android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginTop="11dp"
+                        android:measureAllChildren="false"
+                        android:transitionGroup="false" />
+
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+
+    </LinearLayout>
 
 </LinearLayout>
 
