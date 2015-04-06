@@ -4,10 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -27,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -34,6 +38,7 @@ import com.google.android.gms.common.SignInButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 
 /**
@@ -333,56 +338,83 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mEmailView.setAdapter(adapter);
     }
 
+    private enum LoginResponse {NONE, LOGIN, NOT_FOUND, WRONG_PASSWORD, INTERRUPTED};
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse>{
 
         private final String mEmail;
         private final String mPassword;
-        private final Context context;
+        private final Context mContext;
+        private UserRegisterTask mRegisterAuthTask;
 
         UserLoginTask(String email, String password, Context context) {
             mEmail = email;
             mPassword = password;
-            this.context = context;
+            mContext = context;
+            mRegisterAuthTask = null;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected LoginResponse doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                return false;
+                return LoginResponse.INTERRUPTED;
             }
 
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                    if(pieces[1].equals(mPassword))
+                        return LoginResponse.LOGIN;
+                    else
+                        return LoginResponse.WRONG_PASSWORD;
                 }
             }
-
-            // TODO: register the new account here.
-            return true;
+            return LoginResponse.NOT_FOUND;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final LoginResponse responseStatus) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                context.startActivity(new Intent(context, UserDetail.class));
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            switch (responseStatus){
+                case NONE:
+                    break;
+                case LOGIN:
+                    mContext.startActivity(new Intent(mContext, UserDetail.class));
+                    finish();
+                    break;
+                case NOT_FOUND:
+                    new AlertDialog.Builder(mContext)
+                            .setTitle(getString(R.string.login_dialog_title))
+                            .setMessage(getString(R.string.login_dialog_message))
+                            .setPositiveButton(getString(R.string.login_dialog_button_positive), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    showProgress(true);
+                                    mRegisterAuthTask = new UserRegisterTask(mEmail, mPassword, mContext);
+                                    mRegisterAuthTask.execute((Void) null);
+                                }
+                            })
+                            .setNegativeButton(getString(R.string.login_dialog_button_negative), null)
+                            .create()
+                            .show();
+                    break;
+                case WRONG_PASSWORD:
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                    break;
+                case INTERRUPTED:
+                    Toast.makeText(mContext, getString(R.string.error_interrupted), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -390,6 +422,50 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
+        }
+
+        public class UserRegisterTask extends AsyncTask<Void, Void, Boolean>{
+
+            private final String mEmail;
+            private final String mPassword;
+            private final Context mContext;
+
+            UserRegisterTask(String email, String password, Context context) {
+                mEmail = email;
+                mPassword = password;
+                mContext = context;
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                // TODO: attempt authentication against a network service.
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    return false;
+                }
+                // TODO: check if the user is correctly registered.
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(final Boolean isRegistered) {
+                mRegisterAuthTask = null;
+                showProgress(false);
+                if(isRegistered){
+                    mContext.startActivity(new Intent(mContext, UserDetail.class));
+                    finish();
+                }
+                else{
+                    Toast.makeText(mContext, getString(R.string.error_registration), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            protected void onCancelled() {
+                mRegisterAuthTask = null;
+                showProgress(false);
+            }
         }
     }
 }

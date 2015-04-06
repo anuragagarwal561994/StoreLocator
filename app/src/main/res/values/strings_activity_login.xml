@@ -4,7 +4,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in or Register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="plus_sign_out">Switch Google+ account</string>
     <string name="plus_disconnect">Disconnect from Google+</string>
@@ -12,4 +12,10 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_registration">Error in Registration</string>
+    <string name="error_interrupted">Interrupted</string>
+    <string name="login_dialog_button_negative">Cancel</string>
+    <string name="login_dialog_button_positive">Register</string>
+    <string name="login_dialog_title">Register</string>
+    <string name="login_dialog_message">Email Address not registered. Confirm to Register.</string>
 </resources>
