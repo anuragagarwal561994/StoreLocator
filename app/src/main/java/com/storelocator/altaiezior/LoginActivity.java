@@ -13,6 +13,7 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -71,11 +72,16 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     private SignInButton mPlusSignInButton;
     private View mSignOutButtons;
     private View mLoginFormView;
+    private SharedPreferences.Editor loginPreferenceEditor;
+    private SharedPreferences userProfilePreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        loginPreferenceEditor = getSharedPreferences("Login", 0).edit();
+        userProfilePreference = getSharedPreferences("UserProfile", 0);
 
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
@@ -390,7 +396,12 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 case NONE:
                     break;
                 case LOGIN:
-                    mContext.startActivity(new Intent(mContext, UserDetail.class));
+                    loginPreferenceEditor.putBoolean("loggedIn", true).commit();
+                    if(userProfilePreference.getString("First Name", "").isEmpty() &&
+                            userProfilePreference.getString("Last Name", "").isEmpty())
+                        mContext.startActivity(new Intent(mContext, UserDetail.class));
+                    else
+                        mContext.startActivity(new Intent(mContext, MainActivity.class));
                     finish();
                     break;
                 case NOT_FOUND:
@@ -453,7 +464,12 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 mRegisterAuthTask = null;
                 showProgress(false);
                 if(isRegistered){
-                    mContext.startActivity(new Intent(mContext, UserDetail.class));
+                    loginPreferenceEditor.putBoolean("loggedIn", true).commit();
+                    if(userProfilePreference.getString("First Name", "").isEmpty() &&
+                            userProfilePreference.getString("Last Name", "").isEmpty())
+                        mContext.startActivity(new Intent(mContext, UserDetail.class));
+                    else
+                        mContext.startActivity(new Intent(mContext, MainActivity.class));
                     finish();
                 }
                 else{
@@ -469,6 +485,3 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         }
     }
 }
-
-
-

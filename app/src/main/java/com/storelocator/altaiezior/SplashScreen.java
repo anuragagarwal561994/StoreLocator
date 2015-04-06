@@ -2,6 +2,7 @@ package com.storelocator.altaiezior;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,12 +11,20 @@ import android.view.MenuItem;
 
 public class SplashScreen extends Activity {
 
+    public static final String PREFERENCE_NAME = "Login";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        final Intent loginActivityIntent = new Intent(this, LoginActivity.class);
+        final SharedPreferences loginPreference = getSharedPreferences(PREFERENCE_NAME,  0);
+
+        final Intent nextActivity;
+        if(loginPreference.getBoolean("loggedIn", false))
+            nextActivity = new Intent(this, MainActivity.class);
+        else
+            nextActivity = new Intent(this, LoginActivity.class);
 
         Thread timer = new Thread(){
             public void run(){
@@ -24,7 +33,7 @@ public class SplashScreen extends Activity {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
-                    startActivity(loginActivityIntent);
+                    startActivity(nextActivity);
                 }
             }
         };
