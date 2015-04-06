@@ -51,7 +51,7 @@
                             android:padding="15dp"
                             android:textColor="@color/base_black"
                             android:hint="@string/first_name_hint"
-                            android:textColorHint="#ffb9b5af"
+                            android:textColorHint="@color/edit_text_hint_color"
                             android:phoneNumber="false" />
 
                         <EditText
@@ -65,7 +65,7 @@
                             android:padding="15dp"
                             android:textColor="@color/base_black"
                             android:hint="@string/last_name_hint"
-                            android:textColorHint="#ffb9b5af" />
+                            android:textColorHint="@color/edit_text_hint_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -93,7 +93,7 @@
                             android:padding="15dp"
                             android:textColor="@color/base_black"
                             android:hint="@string/email_address_hint"
-                            android:textColorHint="#ffb9b5af" />
+                            android:textColorHint="@color/edit_text_hint_color" />
 
                     </LinearLayout>
 
@@ -124,7 +124,7 @@
                             android:padding="15dp"
                             android:textColor="@color/base_black"
                             android:hint="@string/phone_number_hint"
-                            android:textColorHint="#ffb9b5af" />
+                            android:textColorHint="@color/edit_text_hint_color" />
 
                     </LinearLayout>
                 </LinearLayout>
