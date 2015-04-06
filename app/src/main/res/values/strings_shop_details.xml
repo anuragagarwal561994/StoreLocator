@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="shop_name_label">SHOP NAME</string>
+    <string name="shop_email_label">SHOP EMAIL ADDRESS</string>
+    <string name="shop_address_label">SHOP ADDRESS</string>
+    <string name="shop_phone_number_label">PHONE NUMBER</string>
+    <string name="shop_name_hint">Shop Name</string>
+    <string name="shop_email_hint">Shop Email Address</string>
+    <string name="shop_phone_number_hint">Phone Number</string>
+    <string name="shop_address_hint">Shop Address</string>
+    <string name="delivery_check_box">Provides Delivery System?</string>
+</resources>
