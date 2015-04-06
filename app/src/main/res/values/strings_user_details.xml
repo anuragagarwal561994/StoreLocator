@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_button_text">UPDATE</string>
+    <string name="phone_number_label">PHONE NUMBER</string>
+    <string name="email_address_label">EMAIL ADDRESS</string>
+    <string name="name_label">NAME</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="email_address_hint">Email Address</string>
+    <string name="phone_number_hint">Phone Number</string>
+</resources>
