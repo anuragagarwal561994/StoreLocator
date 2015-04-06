@@ -5,4 +5,5 @@
     <color name="background_grey">#E6E6E6</color>
     <color name="edit_text_back_color">#F0F0F0</color>
     <color name="edit_text_border_color">#D9D9D9</color>
+    <color name="edit_text_hint_color">#B9B5Af</color>
 </resources>
