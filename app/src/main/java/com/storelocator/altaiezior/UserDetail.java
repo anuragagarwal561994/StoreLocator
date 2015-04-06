@@ -2,6 +2,7 @@ package com.storelocator.altaiezior;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
@@ -74,6 +75,12 @@ public class UserDetail extends FragmentActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if(id == R.id.action_logout) {
+            SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
+            loginPreference.putBoolean("loggedIn", false).commit();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

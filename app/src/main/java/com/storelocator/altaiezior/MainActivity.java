@@ -1,8 +1,11 @@
 package com.storelocator.altaiezior;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -32,6 +35,13 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        else if(id==R.id.action_logout){
+            SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
+            loginPreference.putBoolean("loggedIn", false).commit();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
             return true;
         }
 
