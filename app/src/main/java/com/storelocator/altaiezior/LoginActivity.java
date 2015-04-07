@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +38,20 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -51,14 +66,6 @@ import java.util.ResourceBundle;
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
 public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -356,6 +363,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         private final String mPassword;
         private final Context mContext;
         private UserRegisterTask mRegisterAuthTask;
+        private final String LOG_TAG = UserLoginTask.class.getSimpleName();
 
         UserLoginTask(String email, String password, Context context) {
             mEmail = email;
@@ -366,25 +374,75 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
         @Override
         protected LoginResponse doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return LoginResponse.INTERRUPTED;
-            }
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String loginJsonStr = null;
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    if(pieces[1].equals(mPassword))
-                        return LoginResponse.LOGIN;
-                    else
-                        return LoginResponse.WRONG_PASSWORD;
+            try {
+                final String API_BASE_URL = getString(R.string.base_url) + "login";
+                final String EMAIL_PARAM = "email";
+                final String PASSWORD_PARAM = "password";
+
+                Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
+                        .appendQueryParameter(EMAIL_PARAM, mEmail)
+                        .appendQueryParameter(PASSWORD_PARAM, mPassword)
+                        .build();
+                URL url = new URL(buildUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return LoginResponse.INTERRUPTED;
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+                if (buffer.length() == 0) {
+                    return LoginResponse.INTERRUPTED;
+                }
+                loginJsonStr = buffer.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return LoginResponse.INTERRUPTED;
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+                return LoginResponse.INTERRUPTED;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return LoginResponse.INTERRUPTED;
+            } finally{
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
                 }
             }
-            return LoginResponse.NOT_FOUND;
+
+            try{
+                return getLoginDataFromJson(loginJsonStr);
+            }catch(JSONException e){
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return LoginResponse.INTERRUPTED;
+        }
+
+        private LoginResponse getLoginDataFromJson(String loginJsonStr)
+                throws JSONException {
+            return LoginResponse.valueOf(new JSONObject(loginJsonStr).getString("status"));
         }
 
         @Override
@@ -449,14 +507,75 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
             @Override
             protected Boolean doInBackground(Void... params) {
-                // TODO: attempt authentication against a network service.
+                HttpURLConnection urlConnection = null;
+                BufferedReader reader = null;
+                String registerJsonStr = null;
+
                 try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
+                    final String API_BASE_URL = getString(R.string.base_url) + "register";
+                    final String EMAIL_PARAM = "email";
+                    final String PASSWORD_PARAM = "password";
+
+                    Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
+                            .appendQueryParameter(EMAIL_PARAM, mEmail)
+                            .appendQueryParameter(PASSWORD_PARAM, mPassword)
+                            .build();
+                    URL url = new URL(buildUri.toString());
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("PUT");
+                    urlConnection.connect();
+
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        return false;
+                    }
+
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line + "\n");
+                    }
+                    if (buffer.length() == 0) {
+                        return false;
+                    }
+                    registerJsonStr = buffer.toString();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
                     return false;
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                    return false;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                } finally{
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            Log.e(LOG_TAG, "Error closing stream", e);
+                        }
+                    }
                 }
-                // TODO: check if the user is correctly registered.
-                return true;
+
+                try{
+                    return getRegistrationResponseFromJson(registerJsonStr);
+                }catch(JSONException e){
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            private boolean getRegistrationResponseFromJson(String registerJsonStr)
+            throws JSONException{
+                return Boolean.valueOf(new JSONObject(registerJsonStr).getString("status"));
             }
 
             @Override
