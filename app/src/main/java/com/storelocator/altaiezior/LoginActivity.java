@@ -123,7 +123,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,7 +190,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password, this);
+            mAuthTask = new UserLoginTask(email, password, this, mPasswordView);
             mAuthTask.execute((Void) null);
         }
     }
@@ -239,6 +239,14 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    public UserLoginTask getmAuthTask() {
+        return mAuthTask;
+    }
+
+    public void setmAuthTask(UserLoginTask mAuthTask) {
+        this.mAuthTask = mAuthTask;
     }
 
     @Override
@@ -349,258 +357,5 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
-    }
-
-    private enum LoginResponse {NONE, LOGIN, NOT_FOUND, WRONG_PASSWORD, INTERRUPTED};
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse>{
-
-        private final String mEmail;
-        private final String mPassword;
-        private final Context mContext;
-        private UserRegisterTask mRegisterAuthTask;
-        private final String LOG_TAG = UserLoginTask.class.getSimpleName();
-
-        UserLoginTask(String email, String password, Context context) {
-            mEmail = email;
-            mPassword = password;
-            mContext = context;
-            mRegisterAuthTask = null;
-        }
-
-        @Override
-        protected LoginResponse doInBackground(Void... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String loginJsonStr = null;
-
-            try {
-                final String API_BASE_URL = getString(R.string.base_url) + "login";
-                final String EMAIL_PARAM = "email";
-                final String PASSWORD_PARAM = "password";
-
-                Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                        .appendQueryParameter(EMAIL_PARAM, mEmail)
-                        .appendQueryParameter(PASSWORD_PARAM, mPassword)
-                        .build();
-                URL url = new URL(buildUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return LoginResponse.INTERRUPTED;
-                }
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
-                }
-                if (buffer.length() == 0) {
-                    return LoginResponse.INTERRUPTED;
-                }
-                loginJsonStr = buffer.toString();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return LoginResponse.INTERRUPTED;
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-                return LoginResponse.INTERRUPTED;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return LoginResponse.INTERRUPTED;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try{
-                return getLoginDataFromJson(loginJsonStr);
-            }catch(JSONException e){
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-            return LoginResponse.INTERRUPTED;
-        }
-
-        private LoginResponse getLoginDataFromJson(String loginJsonStr)
-                throws JSONException {
-            return LoginResponse.valueOf(new JSONObject(loginJsonStr).getString("status"));
-        }
-
-        @Override
-        protected void onPostExecute(final LoginResponse responseStatus) {
-            mAuthTask = null;
-            showProgress(false);
-
-            switch (responseStatus){
-                case NONE:
-                    break;
-                case LOGIN:
-                    loginPreferenceEditor.putBoolean("loggedIn", true).commit();
-                    if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                            userProfilePreference.getString("Last Name", "").isEmpty())
-                        mContext.startActivity(new Intent(mContext, UserDetail.class));
-                    else
-                        mContext.startActivity(new Intent(mContext, MainActivity.class));
-                    finish();
-                    break;
-                case NOT_FOUND:
-                    new AlertDialog.Builder(mContext)
-                            .setTitle(getString(R.string.login_dialog_title))
-                            .setMessage(getString(R.string.login_dialog_message))
-                            .setPositiveButton(getString(R.string.login_dialog_button_positive), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    showProgress(true);
-                                    mRegisterAuthTask = new UserRegisterTask(mEmail, mPassword, mContext);
-                                    mRegisterAuthTask.execute((Void) null);
-                                }
-                            })
-                            .setNegativeButton(getString(R.string.login_dialog_button_negative), null)
-                            .create()
-                            .show();
-                    break;
-                case WRONG_PASSWORD:
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                    mPasswordView.requestFocus();
-                    break;
-                case INTERRUPTED:
-                    Toast.makeText(mContext, getString(R.string.error_interrupted), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-
-        public class UserRegisterTask extends AsyncTask<Void, Void, Boolean>{
-
-            private final String mEmail;
-            private final String mPassword;
-            private final Context mContext;
-
-            UserRegisterTask(String email, String password, Context context) {
-                mEmail = email;
-                mPassword = password;
-                mContext = context;
-            }
-
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                HttpURLConnection urlConnection = null;
-                BufferedReader reader = null;
-                String registerJsonStr = null;
-
-                try {
-                    final String API_BASE_URL = getString(R.string.base_url) + "register";
-                    final String EMAIL_PARAM = "email";
-                    final String PASSWORD_PARAM = "password";
-
-                    Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                            .appendQueryParameter(EMAIL_PARAM, mEmail)
-                            .appendQueryParameter(PASSWORD_PARAM, mPassword)
-                            .build();
-                    URL url = new URL(buildUri.toString());
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("PUT");
-                    urlConnection.connect();
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
-                    if (inputStream == null) {
-                        return false;
-                    }
-
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line + "\n");
-                    }
-                    if (buffer.length() == 0) {
-                        return false;
-                    }
-                    registerJsonStr = buffer.toString();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return false;
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                    return false;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                } finally{
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (final IOException e) {
-                            Log.e(LOG_TAG, "Error closing stream", e);
-                        }
-                    }
-                }
-
-                try{
-                    return getRegistrationResponseFromJson(registerJsonStr);
-                }catch(JSONException e){
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-                return false;
-            }
-
-            private boolean getRegistrationResponseFromJson(String registerJsonStr)
-            throws JSONException{
-                return Boolean.valueOf(new JSONObject(registerJsonStr).getString("status"));
-            }
-
-            @Override
-            protected void onPostExecute(final Boolean isRegistered) {
-                mRegisterAuthTask = null;
-                showProgress(false);
-                if(isRegistered){
-                    loginPreferenceEditor.putBoolean("loggedIn", true).commit();
-                    if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                            userProfilePreference.getString("Last Name", "").isEmpty())
-                        mContext.startActivity(new Intent(mContext, UserDetail.class));
-                    else
-                        mContext.startActivity(new Intent(mContext, MainActivity.class));
-                    finish();
-                }
-                else{
-                    Toast.makeText(mContext, getString(R.string.error_registration), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            protected void onCancelled() {
-                mRegisterAuthTask = null;
-                showProgress(false);
-            }
-        }
     }
 }
