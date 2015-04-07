@@ -33,18 +33,22 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        else if(id==R.id.action_logout){
-            SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
-            loginPreference.putBoolean("loggedIn", false).commit();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-            return true;
+        switch(id){
+            case R.id.action_settings: break;
+            case R.id.action_user_detail:
+                startActivity(new Intent(this, UserDetail.class));
+                finish();
+                break;
+            case R.id.action_logout:
+                SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
+                loginPreference.putBoolean("loggedIn", false).commit();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }

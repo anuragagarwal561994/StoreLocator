@@ -72,18 +72,18 @@ public class UserDetail extends FragmentActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_settings: break;
+            case R.id.action_logout:
+                SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
+                loginPreference.putBoolean("loggedIn", false).commit();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else if(id == R.id.action_logout) {
-            SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
-            loginPreference.putBoolean("loggedIn", false).commit();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     /**
