@@ -52,61 +52,22 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
 
     @Override
     protected LoginResponse doInBackground(Void... params) {
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
         String loginJsonStr = null;
+        final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "login";
+        final String EMAIL_PARAM = "email";
+        final String PASSWORD_PARAM = "password";
 
+        Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
+                .appendQueryParameter(EMAIL_PARAM, mEmail)
+                .appendQueryParameter(PASSWORD_PARAM, mPassword)
+                .build();
         try {
-            final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "login";
-            final String EMAIL_PARAM = "email";
-            final String PASSWORD_PARAM = "password";
-
-            Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                    .appendQueryParameter(EMAIL_PARAM, mEmail)
-                    .appendQueryParameter(PASSWORD_PARAM, mPassword)
-                    .build();
-            URL url = new URL(buildUri.toString());
-
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("POST");
-            urlConnection.connect();
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
+            loginJsonStr = new ApiCall(buildUri, "POST").sendRequest();
+            if(loginJsonStr==null)
                 return LoginResponse.INTERRUPTED;
-            }
-
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-            if (buffer.length() == 0) {
-                return LoginResponse.INTERRUPTED;
-            }
-            loginJsonStr = buffer.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return LoginResponse.INTERRUPTED;
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            return LoginResponse.INTERRUPTED;
         } catch (IOException e) {
             e.printStackTrace();
             return LoginResponse.INTERRUPTED;
-        } finally{
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
-                }
-            }
         }
 
         try{

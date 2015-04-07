@@ -44,61 +44,23 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
         String registerJsonStr = null;
+        final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "register";
+        final String EMAIL_PARAM = "email";
+        final String PASSWORD_PARAM = "password";
 
-        try {
-            final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "register";
-            final String EMAIL_PARAM = "email";
-            final String PASSWORD_PARAM = "password";
+        Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
+                .appendQueryParameter(EMAIL_PARAM, mEmail)
+                .appendQueryParameter(PASSWORD_PARAM, mPassword)
+                .build();
 
-            Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                    .appendQueryParameter(EMAIL_PARAM, mEmail)
-                    .appendQueryParameter(PASSWORD_PARAM, mPassword)
-                    .build();
-            URL url = new URL(buildUri.toString());
-
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("PUT");
-            urlConnection.connect();
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
+        try{
+            registerJsonStr = new ApiCall(buildUri, "POST").sendRequest();
+            if(registerJsonStr==null)
                 return false;
-            }
-
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-            if (buffer.length() == 0) {
-                return false;
-            }
-            registerJsonStr = buffer.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return false;
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        } finally{
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
-                }
-            }
         }
 
         try{
