@@ -23,6 +23,12 @@ import android.widget.Toast;
 public class UserDetail extends FragmentActivity {
 
     private SharedPreferences.Editor userProfilePreferenceEditor;
+    private SharedPreferences userProfilePreference;
+
+    private EditText mFirstName;
+    private EditText mLastName;
+    private EditText mEmail;
+    private EditText mPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,27 +40,27 @@ public class UserDetail extends FragmentActivity {
                     .commit();
         }
 
-        userProfilePreferenceEditor = getSharedPreferences("UserProfile", 0).edit();
+        userProfilePreference = getSharedPreferences("UserProfile", 0);
+        userProfilePreferenceEditor = userProfilePreference.edit();
 
-        Button mUpdateButton = (Button) findViewById(R.id.update_user_detail);
-        final EditText mFirstName = (EditText) findViewById(R.id.first_name);
-        final EditText mLastName = (EditText) findViewById(R.id.last_name);
-        final EditText mEmail = (EditText) findViewById(R.id.email);
-        final EditText mPhoneNumber = (EditText) findViewById(R.id.phone_number);
+        mFirstName = (EditText) findViewById(R.id.first_name);
+        mLastName = (EditText) findViewById(R.id.last_name);
+        mEmail = (EditText) findViewById(R.id.email);
+        mPhoneNumber = (EditText) findViewById(R.id.phone_number);
 
-        final Context currentContext = this;
+        mFirstName.setText(userProfilePreference.getString("First Name", null));
+        mLastName.setText(userProfilePreference.getString("Last Name", null));
+        mEmail.setText(userProfilePreference.getString("Email Address", null));
+        mPhoneNumber.setText(userProfilePreference.getString("Phone Number", null));
+    }
 
-        mUpdateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: Validate
-                userProfilePreferenceEditor.putString("First Name", mFirstName.getText().toString()).commit();
-                userProfilePreferenceEditor.putString("Last Name", mLastName.getText().toString()).commit();
-                userProfilePreferenceEditor.putString("Email Address", mEmail.getText().toString());
-                userProfilePreferenceEditor.putString("Phone Number", mPhoneNumber.getText().toString());
-                Toast.makeText(currentContext, "Information Updated",Toast.LENGTH_SHORT).show();
-            }
-        });
+    public void UpdateOnClick(View view){
+        //TODO: Validate
+        userProfilePreferenceEditor.putString("First Name", mFirstName.getText().toString()).commit();
+        userProfilePreferenceEditor.putString("Last Name", mLastName.getText().toString()).commit();
+        userProfilePreferenceEditor.putString("Email Address", mEmail.getText().toString()).commit();
+        userProfilePreferenceEditor.putString("Phone Number", mPhoneNumber.getText().toString()).commit();
+        Toast.makeText(this, "Information Updated",Toast.LENGTH_SHORT).show();
     }
 
 
