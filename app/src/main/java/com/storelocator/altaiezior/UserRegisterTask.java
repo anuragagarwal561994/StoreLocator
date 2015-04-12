@@ -44,7 +44,6 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        String registerJsonStr = null;
         final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "register";
         final String EMAIL_PARAM = "email";
         final String PASSWORD_PARAM = "password";
@@ -54,14 +53,9 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
                 .appendQueryParameter(PASSWORD_PARAM, mPassword)
                 .build();
 
-        try{
-            registerJsonStr = new ApiCall(buildUri, "POST").sendRequest();
-            if(registerJsonStr==null)
-                return false;
-        } catch (IOException e) {
-            e.printStackTrace();
+        String registerJsonStr = new ApiCall(buildUri, "PUT").sendRequest();
+        if(registerJsonStr==null)
             return false;
-        }
 
         try{
             return getRegistrationResponseFromJson(registerJsonStr);

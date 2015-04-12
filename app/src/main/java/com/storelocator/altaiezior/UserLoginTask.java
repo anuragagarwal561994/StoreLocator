@@ -52,23 +52,18 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
 
     @Override
     protected LoginResponse doInBackground(Void... params) {
-        String loginJsonStr = null;
         final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "login";
         final String EMAIL_PARAM = "email";
         final String PASSWORD_PARAM = "password";
+
 
         Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
                 .appendQueryParameter(EMAIL_PARAM, mEmail)
                 .appendQueryParameter(PASSWORD_PARAM, mPassword)
                 .build();
-        try {
-            loginJsonStr = new ApiCall(buildUri, "POST").sendRequest();
-            if(loginJsonStr==null)
-                return LoginResponse.INTERRUPTED;
-        } catch (IOException e) {
-            e.printStackTrace();
+        String loginJsonStr = new ApiCall(buildUri, "POST").sendRequest();
+        if(loginJsonStr==null)
             return LoginResponse.INTERRUPTED;
-        }
 
         try{
             return getLoginDataFromJson(loginJsonStr);

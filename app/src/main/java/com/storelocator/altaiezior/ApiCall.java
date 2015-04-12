@@ -26,7 +26,7 @@ public class ApiCall {
         this.buildUri = buildUri;
         this.HTTPMethod = HTTPMethod;
     }
-    public String sendRequest() throws IOException, MalformedURLException, ProtocolException {
+    public String sendRequest() {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         try{
