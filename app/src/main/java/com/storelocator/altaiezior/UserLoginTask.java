@@ -70,6 +70,9 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
         }catch(JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            Toast.makeText(mLoginActivityContext,
+                    mLoginActivityContext.getString(R.string.error_parse_json),
+                    Toast.LENGTH_SHORT).show();
         }
         return LoginResponse.INTERRUPTED;
     }

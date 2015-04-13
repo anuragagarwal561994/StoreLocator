@@ -62,6 +62,9 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
         }catch(JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
+            Toast.makeText(mLoginActivityContext,
+                    mLoginActivityContext.getString(R.string.error_parse_json),
+                    Toast.LENGTH_SHORT).show();
         }
         return false;
     }
