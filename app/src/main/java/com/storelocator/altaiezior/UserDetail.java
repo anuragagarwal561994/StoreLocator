@@ -1,5 +1,8 @@
 package com.storelocator.altaiezior;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +32,9 @@ public class UserDetail extends FragmentActivity {
     private EditText mLastName;
     private EditText mEmail;
     private EditText mPhoneNumber;
+
+    private View mUserDetailForm;
+    private View mProgressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,9 @@ public class UserDetail extends FragmentActivity {
         userProfilePreferenceEditor.putString("Email Address", mEmail.getText().toString()).commit();
         userProfilePreferenceEditor.putString("Phone Number", mPhoneNumber.getText().toString()).commit();
         Toast.makeText(this, "Information Updated",Toast.LENGTH_SHORT).show();
+        mUserDetailForm = findViewById(R.id.user_detail_form);
+        mProgressView = findViewById(R.id.progressBar);
+
     }
 
 
@@ -69,6 +78,42 @@ public class UserDetail extends FragmentActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_user_detail, menu);
         return true;
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mUserDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mUserDetailForm.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mUserDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mUserDetailForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 
     @Override

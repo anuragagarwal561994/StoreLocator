@@ -3,10 +3,21 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     tools:context="com.storelocator.altaiezior.UserDetail" tools:ignore="MergeRootFrame" >
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/progressBar"
+        android:layout_width="263dp"
+        android:layout_height="190dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+
     <LinearLayout
+        android:id="@+id/user_detail_form"
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:visibility="visible">
 
         <LinearLayout
             android:orientation="vertical"
