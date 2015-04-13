@@ -8,4 +8,6 @@
     <string name="last_name_hint">Last Name</string>
     <string name="email_address_hint">Email Address</string>
     <string name="phone_number_hint">Phone Number</string>
+    <string name="error_updation">Error in updating user information</string>
+    <string name="successful_updation">User information updated successfully</string>
 </resources>

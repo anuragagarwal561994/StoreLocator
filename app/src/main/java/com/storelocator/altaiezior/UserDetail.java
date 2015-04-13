@@ -58,18 +58,29 @@ public class UserDetail extends FragmentActivity {
         mLastName.setText(userProfilePreference.getString("Last Name", null));
         mEmail.setText(userProfilePreference.getString("Email Address", null));
         mPhoneNumber.setText(userProfilePreference.getString("Phone Number", null));
-    }
 
-    public void UpdateOnClick(View view){
-        //TODO: Validate
-        userProfilePreferenceEditor.putString("First Name", mFirstName.getText().toString()).commit();
-        userProfilePreferenceEditor.putString("Last Name", mLastName.getText().toString()).commit();
-        userProfilePreferenceEditor.putString("Email Address", mEmail.getText().toString()).commit();
-        userProfilePreferenceEditor.putString("Phone Number", mPhoneNumber.getText().toString()).commit();
-        Toast.makeText(this, "Information Updated",Toast.LENGTH_SHORT).show();
         mUserDetailForm = findViewById(R.id.user_detail_form);
         mProgressView = findViewById(R.id.progressBar);
 
+        final UserDetail currentUserDetailContext = this;
+        Button mButton = (Button) findViewById(R.id.update_user_detail);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Validate
+                //TODO: Remove email from the edit list
+                //TODO: Add phone number field
+                currentUserDetailContext.showProgress(true);
+                new UserUpdateTask(
+                        userProfilePreference.getLong("ID", 0),
+                        mFirstName.getText().toString(),
+                        mLastName.getText().toString(),
+                        mEmail.getText().toString(),
+                        mPhoneNumber.getText().toString(),
+                        currentUserDetailContext
+                ).execute();
+            }
+        });
     }
 
 

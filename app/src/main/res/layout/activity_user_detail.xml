@@ -151,8 +151,7 @@
             android:layout_weight="0"
             android:background="@color/base_black"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:onClick="UpdateOnClick" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
