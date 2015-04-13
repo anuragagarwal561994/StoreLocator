@@ -34,6 +34,7 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
     private final String LOGIN_PREFERENCE_NAME = "Login";
     private final String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
     private final EditText mPasswordView;
+    private JSONObject response;
 
     UserRegisterTask(String email, String password, LoginActivity context, EditText passwordView) {
         mEmail = email;
@@ -58,7 +59,8 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
             return false;
 
         try{
-            return getRegistrationResponseFromJson(registerJsonStr);
+            response = new JSONObject(registerJsonStr);
+            return response.getBoolean("status");
         }catch(JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -67,11 +69,6 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
                     Toast.LENGTH_SHORT).show();
         }
         return false;
-    }
-
-    private boolean getRegistrationResponseFromJson(String registerJsonStr)
-            throws JSONException{
-        return Boolean.valueOf(new JSONObject(registerJsonStr).getString("status"));
     }
 
     @Override

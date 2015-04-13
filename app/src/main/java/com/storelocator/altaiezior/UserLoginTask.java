@@ -41,6 +41,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
     private final String LOGIN_PREFERENCE_NAME = "Login";
     private final String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
     private final EditText mPasswordView;
+    private JSONObject response;
 
     UserLoginTask(String email, String password, LoginActivity context, EditText passwordView) {
         mEmail = email;
@@ -66,7 +67,8 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
             return LoginResponse.INTERRUPTED;
 
         try{
-            return getLoginDataFromJson(loginJsonStr);
+            response = new JSONObject(loginJsonStr);
+            return LoginResponse.valueOf(response.getString("status"));
         }catch(JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -75,11 +77,6 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
                     Toast.LENGTH_SHORT).show();
         }
         return LoginResponse.INTERRUPTED;
-    }
-
-    private LoginResponse getLoginDataFromJson(String loginJsonStr)
-            throws JSONException {
-        return LoginResponse.valueOf(new JSONObject(loginJsonStr).getString("status"));
     }
 
     @Override
