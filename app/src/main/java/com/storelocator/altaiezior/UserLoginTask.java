@@ -88,18 +88,36 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
             case NONE:
                 break;
             case LOGIN:
-                mLoginActivityContext.getSharedPreferences(LOGIN_PREFERENCE_NAME, 0)
-                        .edit()
-                        .putBoolean("loggedIn", true)
-                        .commit();
-                SharedPreferences userProfilePreference =
-                        mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
-                if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                        userProfilePreference.getString("Last Name", "").isEmpty())
-                    mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
-                else
-                    mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
-                mLoginActivityContext.finish();
+                try {
+                    JSONObject userInformation = response.getJSONObject("userInformation");
+                    mLoginActivityContext.getSharedPreferences(LOGIN_PREFERENCE_NAME, 0)
+                            .edit()
+                            .putBoolean("loggedIn", true)
+                            .commit();
+                    SharedPreferences userProfilePreference =
+                            mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
+                    SharedPreferences.Editor userProfileEditor = userProfilePreference.edit();
+                    if(userInformation.has("fname"))
+                        userProfileEditor.putString("First Name", userInformation.getString("fname")).apply();
+                    if(userInformation.has("lname"))
+                        userProfileEditor.putString("Last Name", userInformation.getString("lname")).apply();
+                    if(userInformation.has("email"))
+                        userProfileEditor.putString("Email Address", userInformation.getString("email")).apply();
+                    if(userInformation.has("id"))
+                        userProfileEditor.putLong("ID", userInformation.getLong("id")).apply();
+                    //TODO: Add a phone field
+                    if(userProfilePreference.getString("First Name", "").isEmpty() &&
+                            userProfilePreference.getString("Last Name", "").isEmpty())
+                        mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
+                    else
+                        mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
+                    mLoginActivityContext.finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(mLoginActivityContext,
+                            mLoginActivityContext.getString(R.string.error_parse_json),
+                            Toast.LENGTH_SHORT).show();
+               }
                 break;
             case NOT_FOUND:
                 new AlertDialog.Builder(mLoginActivityContext)

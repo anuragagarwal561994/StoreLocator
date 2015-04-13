@@ -81,12 +81,17 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
                     .commit();
             SharedPreferences userProfilePreference =
                     mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
-            if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                    userProfilePreference.getString("Last Name", "").isEmpty())
+            try {
+                userProfilePreference.edit().putLong("ID", response.getLong("id")).commit();
+                userProfilePreference.edit().putString("Email Address", mEmail).commit();
                 mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
-            else
-                mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
-            mLoginActivityContext.finish();
+                mLoginActivityContext.finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(mLoginActivityContext,
+                        mLoginActivityContext.getString(R.string.error_parse_json),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
         else{
             Toast.makeText(mLoginActivityContext, mLoginActivityContext.getString(R.string.error_registration), Toast.LENGTH_SHORT).show();
