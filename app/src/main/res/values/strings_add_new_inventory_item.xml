@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_name_label">PRODUCT NAME</string>
+    <string name="product_brand_label">PRODUCT BRAND</string>
+    <string name="product_description_label">PRODUCT DESCRIPTION</string>
+    <string name="product_name_hint">Product Name</string>
+    <string name="product_brand_hint">Product Brand</string>
+    <string name="product_description_hint">Product Description</string>
+    <string name="product_category_text">Select Product Category</string>
+</resources>
