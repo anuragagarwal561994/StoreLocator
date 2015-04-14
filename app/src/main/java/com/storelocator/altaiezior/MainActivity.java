@@ -34,6 +34,10 @@ public class MainActivity extends Activity {
         int id = item.getItemId();
 
         switch(id){
+            case R.id.action_search:
+                startActivity(new Intent(this, SearchProduct.class));
+                finish();
+                break;
             case R.id.action_settings: break;
             case R.id.action_user_detail:
                 startActivity(new Intent(this, UserDetail.class));

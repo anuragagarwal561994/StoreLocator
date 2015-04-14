@@ -58,6 +58,25 @@
             android:parentActivityName=".AddNewInventoryItem"
             android:theme="@style/Theme.AppCompat">
         </activity>
+        <activity
+            android:name=".SearchProduct"
+            android:label="@string/title_activity_search_product"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.storelocator.altaiezior.MainActivity" />
+        </activity>
+        <provider
+            android:name="com.storelocator.altaiezior.database.ItemProvider"
+            android:authorities="com.storelocator.altaiezior.database.AUTHORITY"
+            android:exported="false" >
+        </provider>
+        <service
+            android:name=".CategoryDatabaseService"
+            android:exported="false"
+            android:label="Add Category" >
+        </service>
     </application>
 
 </manifest>
