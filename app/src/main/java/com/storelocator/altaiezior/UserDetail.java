@@ -40,11 +40,6 @@ public class UserDetail extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_detail);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
 
         userProfilePreference = getSharedPreferences("UserProfile", 0);
         userProfilePreferenceEditor = userProfilePreference.edit();
@@ -146,21 +141,5 @@ public class UserDetail extends FragmentActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_user_detail, container, false);
-            return rootView;
-        }
     }
 }
