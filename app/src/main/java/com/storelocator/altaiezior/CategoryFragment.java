@@ -75,8 +75,8 @@ public class CategoryFragment extends Fragment {
         setHasOptionsMenu(true);
         mAdapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.list_item, null, new String[] {
-                CategoryItem.COLUMN_NAME, CategoryItem.COLUMN_TIMESTAMP }, new int[] {
-                android.R.id.text1, android.R.id.text2 }, 0);
+                CategoryItem.COLUMN_NAME }, new int[] {
+                android.R.id.text1 }, 0);
     }
 
     @Override
