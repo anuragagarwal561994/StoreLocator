@@ -200,14 +200,8 @@ public class CategoryFragment extends Fragment {
         boolean result = false;
         /*switch (item.getItemId()) {
             case R.id.action_add:
-                showAddDialog();
                 break;
         }*/
         return result;
     }
-
-    /*void showAddDialog() {
-        DialogFragment dialog = new DialogAddLink();
-        dialog.show(getFragmentManager(), "add_link");
-    }*/
 }
