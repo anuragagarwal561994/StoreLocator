@@ -1,24 +1,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".SearchProduct">
-    <item android:id="@+id/action_add"
-        android:title="@string/add_product"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_content_add"></item>
     <item android:id="@+id/action_sync"
         android:title="@string/sync"
-        android:orderInCategory="101"
+        android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_popup_sync"></item>
     <item android:id="@+id/action_user_detail"
         android:title="@string/action_user_detial"
-        android:orderInCategory="102"
+        android:orderInCategory="101"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_user"></item>
     <item android:id="@+id/action_logout"
         android:title="@string/action_logout"
-        android:orderInCategory="103"
+        android:orderInCategory="102"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_action_exit_to_app"></item>
 </menu>

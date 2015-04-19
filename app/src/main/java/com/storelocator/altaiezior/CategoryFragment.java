@@ -155,8 +155,6 @@ public class CategoryFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean result = false;
         switch (item.getItemId()) {
-            case R.id.action_add:
-                break;
             case R.id.action_sync:
                 final String email  = PreferenceManager.getDefaultSharedPreferences(
                         getActivity()).getString(SyncHelper.KEY_ACCOUNT, null);
