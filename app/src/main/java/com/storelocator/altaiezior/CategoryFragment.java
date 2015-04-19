@@ -69,6 +69,14 @@ public class CategoryFragment extends Fragment {
     public CategoryFragment() {
     }
 
+    OnCategorySelectedListener mCallback;
+
+    // Container Activity must implement this interface
+    public interface OnCategorySelectedListener{
+        public void onCategorySelected(CategoryItem categoryItem);
+        public void removeLastFromStack();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,15 +109,7 @@ public class CategoryFragment extends Fragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position,
                                     long id) {
                 final CategoryItem categoryItem = new CategoryItem((Cursor) mAdapter.getItem(position));
-                DatabaseHandler db = DatabaseHandler.getInstance(getActivity());
-                Cursor c = db.getCategoriesFromParent(categoryItem.getId());
-                if(c.getCount()>0){
-                    mAdapter.swapCursor(c);
-                    mAdapter.notifyDataSetChanged();
-                }
-                else{
-                    new CategoryChooseDialog().show(getFragmentManager(), "choose_action");
-                }
+                mCallback.onCategorySelected(categoryItem);
             }
         });
 
@@ -144,9 +144,31 @@ public class CategoryFragment extends Fragment {
         }
     }
 
+    public void updateCategoryList(Long parent_id){
+        DatabaseHandler db = DatabaseHandler.getInstance(getActivity());
+        Cursor c = db.getCategoriesFromParent(parent_id);
+        if(c.getCount()>0){
+            mAdapter.swapCursor(c);
+            mAdapter.notifyDataSetChanged();
+        }
+        else{
+            mCallback.removeLastFromStack();
+            new CategoryChooseDialog().show(getFragmentManager(), "choose_action");
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnCategorySelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnCategorySelectedListener");
+        }
     }
 
     @Override
