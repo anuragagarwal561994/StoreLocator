@@ -100,11 +100,15 @@ public class CategoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position,
                                     long id) {
-                /*final CategoryItem CategoryItem = new CategoryItem((Cursor) mAdapter.getItem(position));
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(CategoryItem.url));
-                startActivity(i);*/
-            }});
+                final CategoryItem categoryItem = new CategoryItem((Cursor) mAdapter.getItem(position));
+                DatabaseHandler db = DatabaseHandler.getInstance(getActivity());
+                Cursor c = db.getCategoriesFromParent(categoryItem.getId());
+                if(c.getCount()>0){
+                    mAdapter.swapCursor(c);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
 
         mListView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
 

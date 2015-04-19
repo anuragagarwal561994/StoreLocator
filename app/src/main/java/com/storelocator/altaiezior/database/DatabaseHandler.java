@@ -116,6 +116,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    public Cursor getCategoriesFromParent(final long parent_id){
+        final SQLiteDatabase db = this.getReadableDatabase();
+        final Cursor cursor = db.query(CategoryItem.TABLE_NAME,
+                CategoryItem.FIELDS, CategoryItem.COLUMN_PARENT_ID + " IS ?",
+                new String[] {String.valueOf(parent_id)}, null, null, null, null);
+        return cursor;
+    }
 
     public synchronized Cursor getCategoryItemCursor(final long id) {
         final SQLiteDatabase db = this.getReadableDatabase();
