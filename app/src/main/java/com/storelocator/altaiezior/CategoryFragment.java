@@ -110,63 +110,6 @@ public class CategoryFragment extends Fragment {
             }
         });
 
-        mListView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-
-            HashMap<Long, CategoryItem> categories = new HashMap<Long, CategoryItem>();
-
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode,
-                                                  int position, long id, boolean checked) {
-                // Here you can do something when items are
-                // selected/de-selected,
-                // such as update the title in the CAB
-                if (checked) {
-                    categories.put(id,
-                            new CategoryItem((Cursor) mAdapter.getItem(position)));
-                }
-                else {
-                    categories.remove(id);
-                }
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                // Respond to clicks on the actions in the CAB
-                /*switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        deleteItems(categories.values());
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
-                    default:
-                        return false;
-                }*/
-                return false;
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                // Inflate the menu for the CAB
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.menu_search_product_context, menu);
-                return true;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                // Here you can make any necessary updates to the activity when
-                // the CAB is removed. By default, selected items are
-                // deselected/unchecked.
-                categories.clear();
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                // Here you can perform updates to the CAB due to
-                // an invalidate() request
-                return false;
-            }
-        });
-
         // Load content
         getLoaderManager().initLoader(0, null, new LoaderCallbacks<Cursor>() {
 
