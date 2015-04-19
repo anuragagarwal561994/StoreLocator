@@ -36,7 +36,6 @@ public class MainActivity extends Activity {
         switch(id){
             case R.id.action_search:
                 startActivity(new Intent(this, SearchProduct.class));
-                finish();
                 break;
             case R.id.action_settings: break;
             case R.id.action_user_detail:
