@@ -1,13 +1,11 @@
 package com.storelocator.altaiezior;
 
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.storelocator.altaiezior.api.UserDetailServer;
+import retrofit.RestAdapter;
 
 /**
  * Created by altaiezior on 13/4/15.
@@ -22,7 +20,6 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
 
     private final UserDetail mUserActivityContext;
     private final String LOG_TAG = UserUpdateTask.class.getSimpleName();
-    private JSONObject response;
     private String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
 
     UserUpdateTask(Long id, String fname, String lname, String email, String phone, UserDetail context) {
@@ -38,38 +35,12 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         if(mId == 0)
             return false;
-        final String API_BASE_URL = mUserActivityContext.getString(R.string.base_url) + "user";
-        final String FIRST_NAME_PARAM = "fname";
-        final String LAST_NAME_PARAM = "lname";
-        final String EMAIL_PARAM = "email";
-        //TODO: add a phpne number param
-        final String ID_PARAM = "id";
-
-        Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                .appendQueryParameter(FIRST_NAME_PARAM, mFirstName)
-                .appendQueryParameter(LAST_NAME_PARAM, mLastName)
-                .appendQueryParameter(EMAIL_PARAM, mEmail)
-                .appendQueryParameter(ID_PARAM, Long.toString(mId))
-                .build();
-
-        String userProfileUpdateJson = new ApiCall(buildUri, "POST").sendRequest();
-        if(userProfileUpdateJson!=null){
-            try{
-                response = new JSONObject(userProfileUpdateJson);
-                return response.getBoolean("status");
-            }catch(JSONException e){
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-                Toast.makeText(mUserActivityContext,
-                        mUserActivityContext.getString(R.string.error_parse_json),
-                        Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }
-        Toast.makeText(mUserActivityContext,
-                mUserActivityContext.getString(R.string.error_updation),
-                Toast.LENGTH_SHORT).show();
-        return false;
+        UserDetailServer userDetailServer = new RestAdapter.Builder()
+                .setServer(mUserActivityContext.getString(R.string.base_url))
+                .build()
+                .create(UserDetailServer.class);
+        return userDetailServer.updateUser(mFirstName, mLastName, mEmail, mPhoneNumber, mId)
+                .getStatus();
     }
 
     @Override

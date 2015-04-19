@@ -1,33 +1,19 @@
 package com.storelocator.altaiezior;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import com.storelocator.altaiezior.api.UserDetailItem;
+import com.storelocator.altaiezior.api.UserLoginServer;
+import retrofit.RestAdapter;
 
 /**
  * Created by altaiezior on 7/4/15.
- */
-enum LoginResponse {NONE, LOGIN, NOT_FOUND, WRONG_PASSWORD, INTERRUPTED};
-/**
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
  */
@@ -41,7 +27,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
     private final String LOGIN_PREFERENCE_NAME = "Login";
     private final String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
     private final EditText mPasswordView;
-    private JSONObject response;
+    private UserLoginServer.UserAuthentication userAuthentication;
 
     UserLoginTask(String email, String password, LoginActivity context, EditText passwordView) {
         mEmail = email;
@@ -53,30 +39,12 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
 
     @Override
     protected LoginResponse doInBackground(Void... params) {
-        final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "login";
-        final String EMAIL_PARAM = "email";
-        final String PASSWORD_PARAM = "password";
-
-
-        Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                .appendQueryParameter(EMAIL_PARAM, mEmail)
-                .appendQueryParameter(PASSWORD_PARAM, mPassword)
-                .build();
-        String loginJsonStr = new ApiCall(buildUri, "POST").sendRequest();
-        if(loginJsonStr==null)
-            return LoginResponse.INTERRUPTED;
-
-        try{
-            response = new JSONObject(loginJsonStr);
-            return LoginResponse.valueOf(response.getString("status"));
-        }catch(JSONException e){
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-            Toast.makeText(mLoginActivityContext,
-                    mLoginActivityContext.getString(R.string.error_parse_json),
-                    Toast.LENGTH_SHORT).show();
-        }
-        return LoginResponse.INTERRUPTED;
+        UserLoginServer userDetail = new RestAdapter.Builder()
+                .setServer(mLoginActivityContext.getString(R.string.base_url))
+                .build()
+                .create(UserLoginServer.class);
+        userAuthentication = userDetail.check_user_authentication(mEmail, mPassword);
+        return userAuthentication.getStatus();
     }
 
     @Override
@@ -88,36 +56,26 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
             case NONE:
                 break;
             case LOGIN:
-                try {
-                    JSONObject userInformation = response.getJSONObject("userInformation");
-                    mLoginActivityContext.getSharedPreferences(LOGIN_PREFERENCE_NAME, 0)
-                            .edit()
-                            .putBoolean("loggedIn", true)
-                            .commit();
-                    SharedPreferences userProfilePreference =
-                            mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
-                    SharedPreferences.Editor userProfileEditor = userProfilePreference.edit();
-                    if(userInformation.has("fname"))
-                        userProfileEditor.putString("First Name", userInformation.getString("fname")).apply();
-                    if(userInformation.has("lname"))
-                        userProfileEditor.putString("Last Name", userInformation.getString("lname")).apply();
-                    if(userInformation.has("email"))
-                        userProfileEditor.putString("Email Address", userInformation.getString("email")).apply();
-                    if(userInformation.has("id"))
-                        userProfileEditor.putLong("ID", userInformation.getLong("id")).apply();
-                    //TODO: Add a phone field
-                    if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                            userProfilePreference.getString("Last Name", "").isEmpty())
-                        mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
-                    else
-                        mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
-                    mLoginActivityContext.finish();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(mLoginActivityContext,
-                            mLoginActivityContext.getString(R.string.error_parse_json),
-                            Toast.LENGTH_SHORT).show();
-               }
+                UserDetailItem userDetailItem =
+                        userAuthentication.getUserInformation();
+                mLoginActivityContext.getSharedPreferences(LOGIN_PREFERENCE_NAME, 0)
+                        .edit()
+                        .putBoolean("loggedIn", true)
+                        .commit();
+                SharedPreferences userProfilePreference =
+                        mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
+                SharedPreferences.Editor userProfileEditor = userProfilePreference.edit();
+                userProfileEditor.putString("First Name", userDetailItem.getFname()).apply();
+                userProfileEditor.putString("Last Name", userDetailItem.getLname()).apply();
+                userProfileEditor.putString("Email Address", userDetailItem.getFname()).apply();
+                userProfileEditor.putLong("ID", userDetailItem.getId()).apply();
+                //TODO: Add a phone field
+                if(userProfilePreference.getString("First Name", "").isEmpty() &&
+                        userProfilePreference.getString("Last Name", "").isEmpty())
+                    mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
+                else
+                    mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
+                mLoginActivityContext.finish();
                 break;
             case NOT_FOUND:
                 new AlertDialog.Builder(mLoginActivityContext)
@@ -129,7 +87,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 mLoginActivityContext.showProgress(true);
                                 mRegisterAuthTask = new UserRegisterTask(mEmail, mPassword,
-                                        mLoginActivityContext, mPasswordView);
+                                        mLoginActivityContext);
                                 mRegisterAuthTask.execute((Void) null);
                             }
                         })

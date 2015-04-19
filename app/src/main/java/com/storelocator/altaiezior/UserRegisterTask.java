@@ -1,24 +1,12 @@
 package com.storelocator.altaiezior;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
+import android.content.SharedPreferences;;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import com.storelocator.altaiezior.api.UserRegisterServer;
+import retrofit.RestAdapter;
 
 /**
  * Created by altaiezior on 7/4/15.
@@ -33,42 +21,22 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
     private final String LOG_TAG = UserRegisterTask.class.getSimpleName();
     private final String LOGIN_PREFERENCE_NAME = "Login";
     private final String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
-    private final EditText mPasswordView;
-    private JSONObject response;
+    private UserRegisterServer.RegisterResponse registerResponse;
 
-    UserRegisterTask(String email, String password, LoginActivity context, EditText passwordView) {
+    UserRegisterTask(String email, String password, LoginActivity context) {
         mEmail = email;
         mPassword = password;
         mLoginActivityContext = context;
-        mPasswordView = passwordView;
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        final String API_BASE_URL = mLoginActivityContext.getString(R.string.base_url) + "register";
-        final String EMAIL_PARAM = "email";
-        final String PASSWORD_PARAM = "password";
-
-        Uri buildUri = Uri.parse(API_BASE_URL).buildUpon()
-                .appendQueryParameter(EMAIL_PARAM, mEmail)
-                .appendQueryParameter(PASSWORD_PARAM, mPassword)
-                .build();
-
-        String registerJsonStr = new ApiCall(buildUri, "PUT").sendRequest();
-        if(registerJsonStr==null)
-            return false;
-
-        try{
-            response = new JSONObject(registerJsonStr);
-            return response.getBoolean("status");
-        }catch(JSONException e){
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-            Toast.makeText(mLoginActivityContext,
-                    mLoginActivityContext.getString(R.string.error_parse_json),
-                    Toast.LENGTH_SHORT).show();
-        }
-        return false;
+        UserRegisterServer userRegisterServer = new RestAdapter.Builder()
+                .setServer(mLoginActivityContext.getString(R.string.base_url))
+                .build()
+                .create(UserRegisterServer.class);
+        registerResponse = userRegisterServer.register_user(mEmail, mPassword);
+        return registerResponse.getStatus();
     }
 
     @Override
@@ -81,17 +49,10 @@ public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
                     .commit();
             SharedPreferences userProfilePreference =
                     mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
-            try {
-                userProfilePreference.edit().putLong("ID", response.getLong("id")).commit();
-                userProfilePreference.edit().putString("Email Address", mEmail).commit();
-                mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
-                mLoginActivityContext.finish();
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Toast.makeText(mLoginActivityContext,
-                        mLoginActivityContext.getString(R.string.error_parse_json),
-                        Toast.LENGTH_SHORT).show();
-            }
+            userProfilePreference.edit().putLong("ID", registerResponse.getId()).commit();
+            userProfilePreference.edit().putString("Email Address", mEmail).commit();
+            mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
+            mLoginActivityContext.finish();
         }
         else{
             Toast.makeText(mLoginActivityContext, mLoginActivityContext.getString(R.string.error_registration), Toast.LENGTH_SHORT).show();
