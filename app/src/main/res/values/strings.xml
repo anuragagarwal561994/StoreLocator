@@ -21,4 +21,7 @@
     <string name="syncing_">Syncing...</string>
     <string name="no_app_can_open_this">No app can open this</string>
     <string name="choose_aciton">Choose Action</string>
+    <string name="title_activity_search_result">SearchResult</string>
+    <string name="button_search">Search</string>
+    <string name="hint_search">Search Product</string>
 </resources>
