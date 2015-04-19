@@ -20,4 +20,5 @@
     <string name="sync">Sync</string>
     <string name="syncing_">Syncing...</string>
     <string name="no_app_can_open_this">No app can open this</string>
+    <string name="choose_aciton">Choose Action</string>
 </resources>

@@ -107,6 +107,9 @@ public class CategoryFragment extends Fragment {
                     mAdapter.swapCursor(c);
                     mAdapter.notifyDataSetChanged();
                 }
+                else{
+                    new CategoryChooseDialog().show(getFragmentManager(), "choose_action");
+                }
             }
         });
 
