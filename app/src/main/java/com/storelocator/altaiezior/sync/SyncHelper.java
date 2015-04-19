@@ -15,6 +15,7 @@ import android.util.Log;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableNotifiedException;
+import com.storelocator.altaiezior.api.CategoriesServer;
 import com.storelocator.altaiezior.database.ItemProvider;
 
 public class SyncHelper {

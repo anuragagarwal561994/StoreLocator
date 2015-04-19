@@ -2,10 +2,11 @@ package com.storelocator.altaiezior.sync;
 
 import retrofit.RetrofitError;
 
+import com.storelocator.altaiezior.api.CategoriesServer;
 import com.storelocator.altaiezior.database.DatabaseHandler;
 import com.storelocator.altaiezior.database.CategoryItem;
-import com.storelocator.altaiezior.sync.CategoriesServer.CategoryItems;
-import com.storelocator.altaiezior.sync.CategoriesServer.CategoryMSG;
+import com.storelocator.altaiezior.api.CategoriesServer.CategoryItems;
+import com.storelocator.altaiezior.api.CategoriesServer.CategoryMSG;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -13,11 +14,9 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -92,12 +91,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     items = server.listCategories(token, "false", null);
                 }
                 db.setForeignKeyConstraint(false);
-                if (items != null && items.categories != null) {
-                    for (CategoryMSG msg : items.categories) {
-                        Log.d(TAG, "got category:" + msg.name + ", _id: " + msg._id);
+                if (items != null && items.getCategories() != null) {
+                    for (CategoryMSG msg : items.getCategories()) {
+                        Log.d(TAG, "got category:" + msg.getName() + ", _id: " + msg.get_id());
                         final CategoryItem item = msg.toDBItem();
-                        if (msg.deleted) {
-                            Log.d(TAG, "Deleting:" + msg.name);
+                        if (msg.isDeleted()) {
+                            Log.d(TAG, "Deleting:" + msg.getName());
                             db.deleteItem(item);
                         }
                         else {
@@ -111,7 +110,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
                 //Save sync timestamp
                 PreferenceManager.getDefaultSharedPreferences(getContext())
-                        .edit().putString(KEY_LASTSYNC, items.latestTimestamp)
+                        .edit().putString(KEY_LASTSYNC, items.getLatestTimestamp())
                         .commit();
             }
         }

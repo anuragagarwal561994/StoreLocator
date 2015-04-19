@@ -1,4 +1,4 @@
-package com.storelocator.altaiezior.sync;
+package com.storelocator.altaiezior.api;
 
 import android.util.Log;
 
@@ -27,6 +27,14 @@ public interface CategoriesServer {
     public static class CategoryItems {
         String latestTimestamp;
         List<CategoryMSG> categories;
+
+        public String getLatestTimestamp() {
+            return latestTimestamp;
+        }
+
+        public List<CategoryMSG> getCategories() {
+            return categories;
+        }
     }
 
     /**
@@ -41,6 +49,18 @@ public interface CategoriesServer {
         String name;
         boolean deleted;
         String timestamp;
+
+        public Long get_id() {
+            return _id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isDeleted() {
+            return deleted;
+        }
 
         public CategoryMSG(CategoryItem category) {
             _id = category._id;
