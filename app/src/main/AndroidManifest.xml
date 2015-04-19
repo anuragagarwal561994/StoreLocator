@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <!-- For syncing -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -61,21 +66,34 @@
         <activity
             android:name=".SearchProduct"
             android:label="@string/title_activity_search_product"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.storelocator.altaiezior.MainActivity" />
         </activity>
+
         <provider
             android:name="com.storelocator.altaiezior.database.ItemProvider"
             android:authorities="com.storelocator.altaiezior.database.AUTHORITY"
             android:exported="false" >
         </provider>
+
         <service
             android:name=".CategoryDatabaseService"
             android:exported="false"
             android:label="Add Category" >
+        </service>
+        <service
+            android:name=".sync.SyncService"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
         </service>
     </application>
 

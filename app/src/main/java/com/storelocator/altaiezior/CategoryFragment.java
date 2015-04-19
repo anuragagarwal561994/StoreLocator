@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ActivityNotFoundException;
+import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -27,9 +32,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.storelocator.altaiezior.database.DatabaseHandler;
 import com.storelocator.altaiezior.database.CategoryItem;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.storelocator.altaiezior.sync.SyncHelper;
+import com.storelocator.altaiezior.sync.GetTokenTask;
+import com.storelocator.altaiezior.sync.AccountDialog;
 
 //TODO: have a look at this comment later
 /**
@@ -64,7 +74,7 @@ public class CategoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mAdapter = new SimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_activated_2, null, new String[] {
+                R.layout.list_item, null, new String[] {
                 CategoryItem.COLUMN_NAME, CategoryItem.COLUMN_TIMESTAMP }, new int[] {
                 android.R.id.text1, android.R.id.text2 }, 0);
     }
@@ -79,7 +89,6 @@ public class CategoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_product_list, container, false);
-
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
@@ -99,7 +108,7 @@ public class CategoryFragment extends Fragment {
 
         mListView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
 
-            HashMap<Long, CategoryItem> links = new HashMap<Long, CategoryItem>();
+            HashMap<Long, CategoryItem> categories = new HashMap<Long, CategoryItem>();
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode,
@@ -108,11 +117,11 @@ public class CategoryFragment extends Fragment {
                 // selected/de-selected,
                 // such as update the title in the CAB
                 if (checked) {
-                    links.put(id,
+                    categories.put(id,
                             new CategoryItem((Cursor) mAdapter.getItem(position)));
                 }
                 else {
-                    links.remove(id);
+                    categories.remove(id);
                 }
             }
 
@@ -121,7 +130,7 @@ public class CategoryFragment extends Fragment {
                 // Respond to clicks on the actions in the CAB
                 /*switch (item.getItemId()) {
                     case R.id.action_delete:
-                        deleteItems(links.values());
+                        deleteItems(categories.values());
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
@@ -143,7 +152,7 @@ public class CategoryFragment extends Fragment {
                 // Here you can make any necessary updates to the activity when
                 // the CAB is removed. By default, selected items are
                 // deselected/unchecked.
-                links.clear();
+                categories.clear();
             }
 
             @Override
@@ -160,8 +169,9 @@ public class CategoryFragment extends Fragment {
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
                 return new CursorLoader(getActivity(), CategoryItem.URI(),
-                        CategoryItem.FIELDS, null, null, CategoryItem.COLUMN_TIMESTAMP
-                        + " DESC");
+                        CategoryItem.FIELDS, CategoryItem.COLUMN_DELETED + " IS 0 AND "
+                        + CategoryItem.COLUMN_PARENT_ID + " IS 0 ", null,
+                        CategoryItem.COLUMN_TIMESTAMP + " DESC");
             }
 
             @Override
@@ -179,9 +189,8 @@ public class CategoryFragment extends Fragment {
     }
 
     void deleteItems(Collection<CategoryItem> items) {
-        final DatabaseHandler db = DatabaseHandler.getInstance(getActivity());
         for (CategoryItem item: items) {
-            db.deleteItem(item);
+            getActivity().getContentResolver().delete(item.getUri(), null, null);
         }
     }
 
@@ -198,10 +207,33 @@ public class CategoryFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean result = false;
-        /*switch (item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_add:
                 break;
-        }*/
+            case R.id.action_sync:
+                final String email  = PreferenceManager.getDefaultSharedPreferences(
+                        getActivity()).getString(SyncHelper.KEY_ACCOUNT, null);
+                if(email!=null){
+                    Toast.makeText(getActivity(), R.string.syncing_, Toast.LENGTH_SHORT).show();
+                    SyncHelper.manualSync(getActivity());
+                }
+                else{
+                    if(null == SyncHelper.getSavedAccountName(getActivity())){
+                        final Account[] accounts = AccountManager.get(getActivity())
+                                .getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+                        if(accounts.length==1) {
+                            new GetTokenTask((SearchProduct) getActivity(), accounts[0].name,
+                                    SyncHelper.SCOPE).execute();
+                        }
+                        else if (accounts.length>1){
+                            DialogFragment dialog = new AccountDialog();
+                            dialog.show(getFragmentManager(), "account_dialog");
+                        }
+                    }
+                }
+
+
+        }
         return result;
     }
 }

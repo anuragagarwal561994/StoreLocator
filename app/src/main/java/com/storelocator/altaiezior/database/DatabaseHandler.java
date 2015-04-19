@@ -36,6 +36,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         this.context = context.getApplicationContext();
     }
 
+    public void setForeignKeyConstraint(boolean on){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("PRAGMA foreign_keys="+(on?"ON":"OFF")+";");
+    }
+
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
@@ -99,10 +104,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return success;
     }
 
-    public synchronized int deleteItem(DBItem item) {
+    public synchronized int deleteItem(CategoryItem item) {
         final SQLiteDatabase db = this.getWritableDatabase();
-        final int result = db.delete(item.getTableName(), DBItem.COLUMN_ID
-                + " IS ?", new String[] { Long.toString(item.getId()) });
+        final int result = db.delete(item.getTableName(), CategoryItem.COLUMN__ID
+                + " IS ?", new String[] { Long.toString(item._id) });
 
         if (result > 0) {
             item.notifyProvider(context);

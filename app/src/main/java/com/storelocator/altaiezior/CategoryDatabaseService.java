@@ -5,6 +5,7 @@ import com.storelocator.altaiezior.database.CategoryItem;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -79,11 +80,10 @@ public class CategoryDatabaseService extends IntentService {
             return;
         }
 
-        CategoryItem categoryItem = new CategoryItem();
-        categoryItem._id = b.getLong("_id");
-        categoryItem.name = b.getString("name");
-        categoryItem.parent_id = b.getLong("parent_id");
-
-        DatabaseHandler.getInstance(this).putItem(categoryItem);
+        ContentValues values = new ContentValues();
+        values.put(CategoryItem.COLUMN_NAME, b.getString("name"));
+        values.put(CategoryItem.COLUMN_PARENT_ID, b.getString("parent_id"));
+        values.put(CategoryItem.COLUMN__ID, b.getString("_id"));
+        getContentResolver().insert(CategoryItem.URI(), values);
     }
 }

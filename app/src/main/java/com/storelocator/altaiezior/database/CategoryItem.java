@@ -23,7 +23,8 @@ public class CategoryItem extends DBItem {
         this.name = cursor.getString(1);
         this.parent_id = cursor.getLong(2);
         this.timestamp = cursor.getString(3);
-        this.synced = cursor.getLong(4);
+        this.deleted = cursor.getLong(4);
+        this.synced = cursor.getLong(5);
     }
 
     public static Uri URI() {
@@ -37,16 +38,18 @@ public class CategoryItem extends DBItem {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_PARENT_ID = "parent_id";
     public static final String COLUMN_TIMESTAMP = "timestamp";
+    public static final String COLUMN_DELETED = "deleted";
     public static final String COLUMN_SYNCED = "synced";
 
     // For database projection so order is consistent
     public static final String[] FIELDS = { COLUMN__ID, COLUMN_NAME, COLUMN_PARENT_ID,
-            COLUMN_TIMESTAMP, COLUMN_SYNCED };
+            COLUMN_TIMESTAMP, COLUMN_DELETED, COLUMN_SYNCED };
 
     public long _id = -1;
     public String name;
     public long parent_id;
     public String timestamp = null;
+    public long deleted = 0;
     public long synced = 0;
 
     public static final int BASEURICODE = 0x3b109c7;
@@ -67,6 +70,7 @@ public class CategoryItem extends DBItem {
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_PARENT_ID, parent_id);
         if (timestamp != null) values.put(COLUMN_TIMESTAMP, timestamp);
+        values.put(COLUMN_DELETED, deleted);
         values.put(COLUMN_SYNCED, synced);
 
         return values;
@@ -93,9 +97,11 @@ public class CategoryItem extends DBItem {
             "CREATE TABLE " + TABLE_NAME
                     +"  ("+COLUMN__ID+" INTEGER PRIMARY KEY,"
                     +"  "+COLUMN_NAME+" TEXT NOT NULL,"
-                    +"  "+COLUMN_PARENT_ID+" INTEGER NOT NULL,"
+                    +"  "+COLUMN_PARENT_ID+" INTEGER NOT NULL DEFAULT 0,"
                     +"  "+COLUMN_TIMESTAMP+" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                    +"  "+COLUMN_DELETED+" INTEGER NOT NULL DEFAULT 0,"
                     +"  "+COLUMN_SYNCED+" INTEGER NOT NULL DEFAULT 0,"
                     +""
-                    +"  UNIQUE ("+COLUMN_NAME+") ON CONFLICT REPLACE)";
+                    +"  UNIQUE ("+COLUMN_NAME+") ON CONFLICT IGNORE,"
+                    +"  FOREIGN KEY("+COLUMN_PARENT_ID+") REFERENCES Categories("+COLUMN__ID+"))";
 }
