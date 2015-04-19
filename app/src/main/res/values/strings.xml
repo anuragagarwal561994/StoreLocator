@@ -12,10 +12,10 @@
     <string name="title_activity_add_new_inventory_item">AddNewInventoryItem</string>
     <string name="title_activity_select_product_catogory">SelectProductCatogory</string>
     <string name="title_activity_select_product_category">SelectProductCategory</string>
-    <string name="title_activity_search_product">SearchProduct</string>
+    <string name="title_activity_search_product">Search</string>
     <string name="add_product">New Product</string>
     <string name="delete_product">Delete Product</string>
-    <string name="search_product">Search Product</string>
+    <string name="action_search_product">Search Product</string>
     <string name="select_account">Select Account</string>
     <string name="sync">Sync</string>
     <string name="syncing_">Syncing...</string>
