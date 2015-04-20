@@ -29,7 +29,9 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -101,7 +103,6 @@ public class CategoryFragment extends Fragment {
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
-        mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -110,6 +111,17 @@ public class CategoryFragment extends Fragment {
                                     long id) {
                 final CategoryItem categoryItem = new CategoryItem((Cursor) mAdapter.getItem(position));
                 mCallback.onCategorySelected(categoryItem);
+            }
+        });
+
+        final Button mSearchButton = (Button) view.findViewById(R.id.product_search_button);
+        final EditText mSearchEditText = (EditText) view.findViewById(R.id.search_edit_box);
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(getActivity(), SearchResult.class);
+                searchIntent.putExtra("query", mSearchEditText.getText().toString());
+                startActivity(searchIntent);
             }
         });
 
