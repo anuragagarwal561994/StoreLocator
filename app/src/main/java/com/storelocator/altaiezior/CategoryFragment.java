@@ -76,7 +76,7 @@ public class CategoryFragment extends Fragment {
     // Container Activity must implement this interface
     public interface OnCategorySelectedListener{
         public void onCategorySelected(CategoryItem categoryItem);
-        public void removeLastFromStack();
+        public void chooseFromDialog();
     }
 
     @Override
@@ -164,8 +164,7 @@ public class CategoryFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         }
         else{
-            mCallback.removeLastFromStack();
-            new CategoryChooseDialog().show(getFragmentManager(), "choose_action");
+            mCallback.chooseFromDialog();
         }
     }
 

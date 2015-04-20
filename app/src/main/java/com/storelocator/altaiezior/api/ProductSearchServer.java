@@ -25,10 +25,6 @@ public interface ProductSearchServer {
         Long category;
         String brand;
 
-        public Long get_id() {
-            return _id;
-        }
-
         public String getName() {
             return name;
         }
@@ -41,15 +37,12 @@ public interface ProductSearchServer {
             return popularity;
         }
 
-        public Long getCategory() {
-            return category;
-        }
-
         public String getBrand() {
             return brand;
         }
     }
 
     @GET("/search")
-    ProductList search_product(@Query("name") String name);
+    ProductList search_product(@Query("name") String name,
+                               @Query("parent_id") Long parent_id);
 }

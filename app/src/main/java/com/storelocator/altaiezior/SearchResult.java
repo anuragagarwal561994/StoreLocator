@@ -16,7 +16,10 @@ public class SearchResult extends Activity {
         Bundle b = new Bundle();
         if(intent!=null){
             if(intent.getExtras()!=null) {
-                b.putString("name", intent.getExtras().getString("query"));
+                if(intent.getExtras().getString("query")!=null)
+                    b.putString("name", intent.getExtras().getString("query"));
+                else
+                    b.putLong("parent_id", intent.getExtras().getLong("parent_id"));
             }
         }
         setContentView(R.layout.activity_search_result);

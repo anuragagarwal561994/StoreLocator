@@ -1,6 +1,8 @@
 package com.storelocator.altaiezior;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -89,8 +91,26 @@ public class SearchProduct extends Activity
         }
     }
 
-    public void removeLastFromStack(){
-        if(!categoryStack.isEmpty())
-            categoryStack.pop();
+    public void chooseFromDialog(){
+        if(!categoryStack.isEmpty()){
+            final Activity currentActivity = this;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.choose_aciton)
+                    .setItems(R.array.choose_action_list,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    switch (i){
+                                        case 0:
+                                            break;
+                                        case 1:
+                                            Intent searchIntent = new Intent(currentActivity, SearchResult.class);
+                                            searchIntent.putExtra("parent_id", categoryStack.pop()._id);
+                                            startActivity(searchIntent);
+                                            break;
+                                    }
+                                }
+                            }).show();
+        }
     }
 }

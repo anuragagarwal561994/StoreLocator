@@ -54,9 +54,13 @@ public class SearchResultFragment extends Fragment {
         mProgressView = rootView.findViewById(R.id.progress_bar);
         mListView = (ListView) rootView.findViewById(R.id.product_result_listview);
         if(getArguments()!=null) {
-            SearchTask search = new SearchTask(getArguments().getString("name"), this);
+            SearchTask searchTask;
+            if(getArguments().getString("name")!=null)
+                searchTask = new SearchTask(0L, getArguments().getString("name"), this);
+            else
+                searchTask = new SearchTask(getArguments().getLong("parent_id"), null, this);
             showProgress(true);
-            search.execute();
+            searchTask.execute();
         }
         return rootView;
     }

@@ -17,9 +17,11 @@ public class SearchTask extends AsyncTask<Void, Void, ProductSearchServer.Produc
 
     private final SearchResultFragment mSearchResultFragment;
     private final String productName;
+    private final Long parent_id;
 
 
-    public SearchTask(String searchQuery, SearchResultFragment context){
+    public SearchTask(Long parent_id, String searchQuery, SearchResultFragment context){
+        this.parent_id =parent_id;
         mSearchResultFragment = context;
         productName = searchQuery;
     }
@@ -31,15 +33,19 @@ public class SearchTask extends AsyncTask<Void, Void, ProductSearchServer.Produc
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build()
                 .create(ProductSearchServer.class);
-        return productSearchServer.search_product(productName);
+        return productSearchServer.search_product(productName, parent_id);
     }
 
     @Override
     protected void onPostExecute(ProductSearchServer.ProductList productList) {
         mSearchResultFragment.showProgress(false);
         if(productList!=null){
-            mSearchResultFragment.setmAdapter(new ProductArrayAdapter(
+            if(productList.getProducts()!=null)
+                mSearchResultFragment.setmAdapter(new ProductArrayAdapter(
                     mSearchResultFragment.getActivity(), productList.getProducts()));
+            else
+                Toast.makeText(mSearchResultFragment.getActivity(), "No item in the list",
+                        Toast.LENGTH_SHORT).show();
         }
         else{
             Toast.makeText(mSearchResultFragment.getActivity(), "Problem getting the search result",
