@@ -166,6 +166,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_short_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+        else if(!password.matches("^(?=.*[a-zA-Z])(?=.*\\d).+$")){
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
