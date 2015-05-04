@@ -104,7 +104,8 @@
                         android:layout_weight="1"
                         android:layout_marginTop="11dp"
                         android:measureAllChildren="false"
-                        android:transitionGroup="false" />
+                        android:transitionGroup="false"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
