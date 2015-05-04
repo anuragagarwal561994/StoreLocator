@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ActivityNotFoundException;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.app.DialogFragment;
@@ -212,8 +213,20 @@ public class CategoryFragment extends Fragment {
                         }
                     }
                 }
-
-
+                break;
+            case R.id.action_user_detail:
+                startActivity(new Intent(getActivity(), UserDetail.class));
+                getActivity().finish();
+                break;
+            case R.id.action_logout:
+                SharedPreferences.Editor loginPreference = getActivity().getSharedPreferences(
+                        "Login", 0).edit();
+                loginPreference.putBoolean("loggedIn", false).commit();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return result;
     }
