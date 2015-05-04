@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,8 @@ import android.os.Build;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class UserDetail extends FragmentActivity {
@@ -66,6 +69,27 @@ public class UserDetail extends FragmentActivity {
                 //TODO: Validate
                 //TODO: Remove email from the edit list
                 //TODO: Add phone number field
+                Boolean cancel = false;
+                if (TextUtils.isEmpty(mFirstName.getText().toString()) ||
+                        isAlphabeticString(mFirstName.getText().toString())) {
+                    mFirstName.setError("Invalid First Name");
+                    mFirstName.requestFocus();
+                    cancel = true;
+                }
+                if (TextUtils.isEmpty(mLastName.getText().toString()) ||
+                        isAlphabeticString(mLastName.getText().toString())) {
+                    mLastName.setError("Invalid Last Name");
+                    mLastName.requestFocus();
+                    cancel = true;
+                }
+                if (TextUtils.isEmpty(mPhoneNumber.getText().toString()) ||
+                        mPhoneNumber.getText().length()!=10) {
+                    mPhoneNumber.setError("Invalid Phone Number");
+                    mPhoneNumber.requestFocus();
+                    cancel = true;
+                }
+                if(cancel)
+                    return;
                 currentUserDetailContext.showProgress(true);
                 new UserUpdateTask(
                         userProfilePreference.getLong("ID", 0),
@@ -85,6 +109,11 @@ public class UserDetail extends FragmentActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_user_detail, menu);
         return true;
+    }
+
+    private boolean isAlphabeticString(String toCheck) {
+        //TODO: Replace this with your own logic
+        return !toCheck.matches("[a-zA-Z]+");
     }
 
     /**
