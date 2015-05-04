@@ -216,7 +216,6 @@ public class CategoryFragment extends Fragment {
                 break;
             case R.id.action_user_detail:
                 startActivity(new Intent(getActivity(), UserDetail.class));
-                getActivity().finish();
                 break;
             case R.id.action_logout:
                 SharedPreferences.Editor loginPreference = getActivity().getSharedPreferences(

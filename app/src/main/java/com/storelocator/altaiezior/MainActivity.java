@@ -40,7 +40,6 @@ public class MainActivity extends Activity {
             case R.id.action_settings: break;
             case R.id.action_user_detail:
                 startActivity(new Intent(this, UserDetail.class));
-                finish();
                 break;
             case R.id.action_logout:
                 SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();

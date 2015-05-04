@@ -45,7 +45,7 @@ public class UserDetail extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_detail);
-
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         mUserDetailForm = findViewById(R.id.user_detail_form);
         mProgressView = findViewById(R.id.progressBar);
 
@@ -173,7 +173,9 @@ public class UserDetail extends FragmentActivity {
         int id = item.getItemId();
 
         switch (id){
-            case R.id.action_settings: break;
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.action_logout:
                 SharedPreferences.Editor loginPreference = getSharedPreferences("Login", 0).edit();
                 loginPreference.putBoolean("loggedIn", false).commit();
