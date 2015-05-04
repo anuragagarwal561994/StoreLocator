@@ -57,7 +57,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
                 break;
             case LOGIN:
                 UserDetailItem userDetailItem =
-                        userAuthentication.getUserInformation();
+                        userAuthentication.getShopkeeperInformation();
                 mLoginActivityContext.getSharedPreferences(LOGIN_PREFERENCE_NAME, 0)
                         .edit()
                         .putBoolean("loggedIn", true)

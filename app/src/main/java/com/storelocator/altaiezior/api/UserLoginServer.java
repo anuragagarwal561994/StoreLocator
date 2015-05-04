@@ -9,14 +9,14 @@ import retrofit.http.Query;
 public interface UserLoginServer {
     public static class UserAuthentication {
         LoginResponse status;
-        UserDetailItem userInformation;
+        UserDetailItem shopkeeperInformation;
 
         public LoginResponse getStatus() {
             return status;
         }
 
-        public UserDetailItem getUserInformation() {
-            return userInformation;
+        public UserDetailItem getShopkeeperInformation() {
+            return shopkeeperInformation;
         }
     }
 
