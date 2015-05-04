@@ -12,6 +12,6 @@
     <string name="mobile_number_hint">Mobile Number</string>
     <string name="shop_name_hint">Shop Name</string>
     <string name="shop_address_hint">Shop Address</string>
-    <string name="error_updation">Error in updating user information</string>
-    <string name="successful_updation">User information updated successfully</string>
+    <string name="error_updation">Error in updating shopkeeper information</string>
+    <string name="successful_updation">Shopkeeper information updated successfully</string>
 </resources>

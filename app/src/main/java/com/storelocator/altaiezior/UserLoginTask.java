@@ -65,17 +65,8 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
                 SharedPreferences userProfilePreference =
                         mLoginActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
                 SharedPreferences.Editor userProfileEditor = userProfilePreference.edit();
-                userProfileEditor.putString("First Name", userDetailItem.getFname()).apply();
-                userProfileEditor.putString("Last Name", userDetailItem.getLname()).apply();
-                userProfileEditor.putString("Email Address", userDetailItem.getFname()).apply();
                 userProfileEditor.putLong("ID", userDetailItem.getId()).apply();
-                userProfileEditor.putString("Shop Name", userDetailItem.getShop_name());
-                userProfileEditor.putString("Shop Address", userDetailItem.getShop_address());
-                userProfileEditor.putLong("Mobile Number", Long.parseLong(userDetailItem.getMobile()));
-                if(userProfilePreference.getString("First Name", "").isEmpty())
-                    mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
-                else
-                    mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
+                mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));
                 mLoginActivityContext.finish();
                 break;
             case NOT_FOUND:

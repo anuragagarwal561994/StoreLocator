@@ -88,7 +88,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         setContentView(R.layout.activity_login);
 
         loginPreferenceEditor = getSharedPreferences("Login", 0).edit();
-        userProfilePreference = getSharedPreferences("UserProfile", 0);
 
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);

@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,15 +29,14 @@ import java.util.regex.Pattern;
 
 public class UserDetail extends FragmentActivity {
 
-    private SharedPreferences.Editor userProfilePreferenceEditor;
     private SharedPreferences userProfilePreference;
 
-    private EditText mFirstName;
-    private EditText mLastName;
-    private EditText mEmail;
-    private EditText mMobileNumber;
-    private EditText mShopName;
-    private EditText mShopAddress;
+    public EditText mFirstName;
+    public EditText mLastName;
+    public EditText mEmail;
+    public EditText mMobileNumber;
+    public EditText mShopName;
+    public EditText mShopAddress;
 
     private View mUserDetailForm;
     private View mProgressView;
@@ -46,8 +46,10 @@ public class UserDetail extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_detail);
 
+        mUserDetailForm = findViewById(R.id.user_detail_form);
+        mProgressView = findViewById(R.id.progressBar);
+
         userProfilePreference = getSharedPreferences("UserProfile", 0);
-        userProfilePreferenceEditor = userProfilePreference.edit();
 
         mFirstName = (EditText) findViewById(R.id.first_name);
         mLastName = (EditText) findViewById(R.id.last_name);
@@ -55,21 +57,17 @@ public class UserDetail extends FragmentActivity {
         mMobileNumber = (EditText) findViewById(R.id.mobile_number);
         mShopAddress = (EditText) findViewById(R.id.shop_address);
         mShopName = (EditText) findViewById(R.id.shop_name);
-
-        mFirstName.setText(userProfilePreference.getString("First Name", null));
-        mLastName.setText(userProfilePreference.getString("Last Name", null));
-        mEmail.setText(userProfilePreference.getString("Email Address", null));
-        Long mobileNumber = userProfilePreference.getLong("Mobile Number", 0);
-        if(mobileNumber!=0)
-            mMobileNumber.setText(mobileNumber.toString());
-        else
-            mMobileNumber.setText(null);
-        mShopAddress.setText(userProfilePreference.getString("Shop Address", null));
-        mShopName.setText(userProfilePreference.getString("Shop Name", null));
-
-        mUserDetailForm = findViewById(R.id.user_detail_form);
-        mProgressView = findViewById(R.id.progressBar);
         mEmail.setEnabled(false);
+
+        showProgress(true);
+        if(userProfilePreference.getLong("ID", 0)!=0)
+            new UserDetailTask(userProfilePreference.getLong("ID", 0), this).execute();
+        else {
+            showProgress(false);
+            mProgressView.setVisibility(View.GONE);
+            mUserDetailForm.setVisibility(View.GONE);
+            findViewById(R.id.no_such_user_textview).setVisibility(View.VISIBLE);
+        }
 
         final UserDetail currentUserDetailContext = this;
         Button mButton = (Button) findViewById(R.id.update_user_detail);
@@ -128,7 +126,6 @@ public class UserDetail extends FragmentActivity {
     }
 
     private boolean isAlphabeticString(String toCheck) {
-        //TODO: Replace this with your own logic
         return !toCheck.matches("[a-zA-Z]+");
     }
 

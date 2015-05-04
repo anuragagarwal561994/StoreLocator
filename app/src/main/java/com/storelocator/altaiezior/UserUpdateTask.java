@@ -21,7 +21,6 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
 
     private final UserDetail mUserActivityContext;
     private final String LOG_TAG = UserUpdateTask.class.getSimpleName();
-    private String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
 
     UserUpdateTask(Long id, String fname, String lname, Long mobile,
                    String shop_name, String shop_address, UserDetail context) {
@@ -50,22 +49,9 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(final Boolean isUpdated) {
         mUserActivityContext.showProgress(false);
-        String ToastMessage = null;
-        if(isUpdated){
-            SharedPreferences userProfilePreference =
-                    mUserActivityContext.getSharedPreferences(USER_PROFILE_PREFERENCE_NAME, 0);
-            SharedPreferences.Editor userProfilePreferenceEditor = userProfilePreference.edit();
-            userProfilePreferenceEditor.putString("First Name", mFirstName).apply();
-            userProfilePreferenceEditor.putString("Last Name", mLastName).apply();
-            userProfilePreferenceEditor.putLong("Mobile Number", mMobileNumber).apply();
-            userProfilePreferenceEditor.putString("Shop Name", mShopName).apply();
-            userProfilePreferenceEditor.putString("Shop Address", mShopAddress).apply();
-            ToastMessage = mUserActivityContext.getString(R.string.successful_updation);
-        }
-        else{
-            ToastMessage = mUserActivityContext.getString(R.string.error_updation);
-        }
-        Toast.makeText(mUserActivityContext, ToastMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mUserActivityContext,mUserActivityContext.getString(
+                        isUpdated?R.string.successful_updation:R.string.error_updation),
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override

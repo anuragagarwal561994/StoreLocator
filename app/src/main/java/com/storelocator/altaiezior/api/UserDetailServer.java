@@ -1,5 +1,8 @@
 package com.storelocator.altaiezior.api;
 
+import com.storelocator.altaiezior.UserDetail;
+
+import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Query;
 
@@ -14,6 +17,9 @@ public interface UserDetailServer {
             return status;
         }
     }
+
+    @GET("/shopkeeper")
+    UserDetailItem getShopkeeper(@Query("id") Long id);
 
     @POST("/shopkeeper")
     UpdateUserResponse updateUser( @Query("fname") String fname,

@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
     <string name="title_activity_splash_screen">Splash Screen</string>
-    <string name="title_activity_user_detail">User Detail</string>
+    <string name="title_activity_user_detail">Shopkeeper Detail</string>
     <string name="base_url">http://10.0.2.2:8080/_ah/api/storelocator/v1</string>
     <string name="action_user_detial">Profile Details</string>
     <string name="error_parse_json">Error parsing data</string>

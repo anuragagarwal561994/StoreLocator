@@ -214,4 +214,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Such User"
+        android:id="@+id/no_such_user_textview"
+        android:textAlignment="textEnd"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:textSize="50dp"
+        android:textColor="@android:color/secondary_text_dark_nodisable" />
+
 </FrameLayout>

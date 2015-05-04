@@ -9,7 +9,7 @@ public class UserDetailItem{
     String email;
     String shop_name;
     Long id;
-    String mobile;
+    Long mobile;
     String shop_address;
 
 
@@ -33,7 +33,7 @@ public class UserDetailItem{
         return shop_name;
     }
 
-    public String getMobile() {
+    public Long getMobile() {
         return mobile;
     }
 
