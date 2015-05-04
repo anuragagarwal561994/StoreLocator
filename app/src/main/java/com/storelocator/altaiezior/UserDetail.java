@@ -76,8 +76,7 @@ public class UserDetail extends FragmentActivity {
                     mFirstName.requestFocus();
                     cancel = true;
                 }
-                if (TextUtils.isEmpty(mLastName.getText().toString()) ||
-                        isAlphabeticString(mLastName.getText().toString())) {
+                if (isAlphabeticString(mLastName.getText().toString())) {
                     mLastName.setError("Invalid Last Name");
                     mLastName.requestFocus();
                     cancel = true;
