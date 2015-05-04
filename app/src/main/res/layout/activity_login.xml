@@ -84,6 +84,13 @@
                     android:textColorHint="@color/base_black"
                     android:theme="@style/AppTheme" />
 
+                <com.google.android.gms.common.SignInButton android:id="@+id/plus_sign_in_button"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_marginTop="11dp"
+                    android:measureAllChildren="false"
+                    android:transitionGroup="false"
+                    android:visibility="visible" />
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="fill_parent"
@@ -98,14 +105,6 @@
                         android:textColor="@android:color/white"
                         android:layout_marginTop="15dp"
                         android:layout_marginBottom="4dp" />
-
-                    <com.google.android.gms.common.SignInButton android:id="@+id/plus_sign_in_button"
-                        android:layout_width="match_parent" android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginTop="11dp"
-                        android:measureAllChildren="false"
-                        android:transitionGroup="false"
-                        android:visibility="gone" />
 
                 </LinearLayout>
 
