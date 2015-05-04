@@ -21,8 +21,7 @@ public class SplashScreen extends Activity {
 
         final Intent nextActivity;
         if(loginPreference.getBoolean("loggedIn", false))
-            if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                    userProfilePreference.getString("Last Name", "").isEmpty())
+            if(userProfilePreference.getString("First Name", "").isEmpty())
                 nextActivity = new Intent(this, UserDetail.class);
             else
                 nextActivity = new Intent(this, MainActivity.class);
