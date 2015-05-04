@@ -1,6 +1,7 @@
 package com.storelocator.altaiezior;
 
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -43,9 +44,12 @@ public class SearchTask extends AsyncTask<Void, Void, ProductSearchServer.Produc
             if(productList.getProducts()!=null)
                 mSearchResultFragment.setmAdapter(new ProductArrayAdapter(
                     mSearchResultFragment.getActivity(), productList.getProducts()));
-            else
-                Toast.makeText(mSearchResultFragment.getActivity(), "No item in the list",
-                        Toast.LENGTH_SHORT).show();
+            else {
+                mSearchResultFragment.getActivity().findViewById(R.id.no_item_plain_text)
+                        .setVisibility(View.VISIBLE);
+                mSearchResultFragment.getActivity().findViewById(R.id.list_container)
+                        .setVisibility(View.GONE);
+            }
         }
         else{
             Toast.makeText(mSearchResultFragment.getActivity(), "Problem getting the search result",
