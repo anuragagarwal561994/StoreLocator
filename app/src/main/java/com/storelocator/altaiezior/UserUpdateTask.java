@@ -14,20 +14,23 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
 
     private final String mFirstName;
     private final String mLastName;
-    private final String mEmail;
-    private final String mPhoneNumber;
+    private final Long mMobileNumber;
+    private final String mShopName;
+    private final String mShopAddress;
     private final Long mId;
 
     private final UserDetail mUserActivityContext;
     private final String LOG_TAG = UserUpdateTask.class.getSimpleName();
     private String USER_PROFILE_PREFERENCE_NAME = "UserProfile";
 
-    UserUpdateTask(Long id, String fname, String lname, String email, String phone, UserDetail context) {
+    UserUpdateTask(Long id, String fname, String lname, Long mobile,
+                   String shop_name, String shop_address, UserDetail context) {
         mId = id;
         mFirstName = fname;
         mLastName = lname;
-        mEmail = email;
-        mPhoneNumber = phone;
+        mShopName = shop_name;
+        mShopAddress = shop_address;
+        mMobileNumber = mobile;
         mUserActivityContext = context;
     }
 
@@ -39,7 +42,8 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
                 .setServer(mUserActivityContext.getString(R.string.base_url))
                 .build()
                 .create(UserDetailServer.class);
-        return userDetailServer.updateUser(mFirstName, mLastName, mEmail, mPhoneNumber, mId)
+        return userDetailServer.updateUser(mFirstName, mLastName, mShopName,
+                mShopAddress, mMobileNumber, mId)
                 .getStatus();
     }
 
@@ -53,8 +57,9 @@ public class UserUpdateTask extends AsyncTask<Void, Void, Boolean> {
             SharedPreferences.Editor userProfilePreferenceEditor = userProfilePreference.edit();
             userProfilePreferenceEditor.putString("First Name", mFirstName).apply();
             userProfilePreferenceEditor.putString("Last Name", mLastName).apply();
-            userProfilePreferenceEditor.putString("Email Address", mEmail).apply();
-            userProfilePreferenceEditor.putString("Phone Number", mPhoneNumber).apply();
+            userProfilePreferenceEditor.putLong("Mobile Number", mMobileNumber).apply();
+            userProfilePreferenceEditor.putString("Shop Name", mShopName).apply();
+            userProfilePreferenceEditor.putString("Shop Address", mShopAddress).apply();
             ToastMessage = mUserActivityContext.getString(R.string.successful_updation);
         }
         else{

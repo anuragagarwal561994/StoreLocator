@@ -83,7 +83,7 @@
                         android:orientation="vertical"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp">
+                        android:layout_marginTop="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -113,13 +113,13 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:layout_marginTop="30dp">
+                        android:layout_marginTop="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:text="@string/phone_number_label"
+                            android:text="@string/mobile_number_label"
                             android:id="@+id/numberLabel"
                             android:textColor="@color/base_green" />
 
@@ -128,16 +128,74 @@
                             android:layout_height="wrap_content"
                             android:inputType="phone"
                             android:ems="10"
-                            android:id="@+id/phone_number"
+                            android:id="@+id/mobile_number"
                             android:layout_weight="0"
                             android:background="@drawable/edit_text_border"
                             android:layout_marginTop="10dp"
                             android:padding="15dp"
                             android:textColor="@color/base_black"
-                            android:hint="@string/phone_number_hint"
+                            android:hint="@string/mobile_number_hint"
                             android:textColorHint="@color/edit_text_hint_color"
                             android:maxLength="10" />
 
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="fill_parent"
+                        android:layout_marginTop="20dp"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="@string/shop_name_label"
+                            android:id="@+id/shopNameLabel"
+                            android:textColor="@color/base_green" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:ems="10"
+                            android:id="@+id/shop_name"
+                            android:background="@drawable/edit_text_border"
+                            android:layout_marginTop="10dp"
+                            android:padding="15dp"
+                            android:textColor="@color/base_black"
+                            android:hint="@string/shop_name_hint"
+                            android:textColorHint="@color/edit_text_hint_color"
+                            android:phoneNumber="false" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="@string/shop_address_label"
+                            android:id="@+id/shopAddressLabel"
+                            android:textColor="@color/base_green"/>
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPostalAddress"
+                            android:ems="10"
+                            android:id="@+id/shop_address"
+                            android:background="@drawable/edit_text_border"
+                            android:layout_marginTop="10dp"
+                            android:padding="15dp"
+                            android:textColor="@color/base_black"
+                            android:hint="@string/shop_address_hint"
+                            android:textColorHint="@color/edit_text_hint_color"
+                            android:singleLine="false"/>
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>

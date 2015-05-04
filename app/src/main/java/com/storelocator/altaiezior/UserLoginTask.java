@@ -69,9 +69,10 @@ public class UserLoginTask extends AsyncTask<Void, Void, LoginResponse> {
                 userProfileEditor.putString("Last Name", userDetailItem.getLname()).apply();
                 userProfileEditor.putString("Email Address", userDetailItem.getFname()).apply();
                 userProfileEditor.putLong("ID", userDetailItem.getId()).apply();
-                //TODO: Add a phone field
-                if(userProfilePreference.getString("First Name", "").isEmpty() &&
-                        userProfilePreference.getString("Last Name", "").isEmpty())
+                userProfileEditor.putString("Shop Name", userDetailItem.getShop_name());
+                userProfileEditor.putString("Shop Address", userDetailItem.getShop_address());
+                userProfileEditor.putLong("Mobile Number", Long.parseLong(userDetailItem.getMobile()));
+                if(userProfilePreference.getString("First Name", "").isEmpty())
                     mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, UserDetail.class));
                 else
                     mLoginActivityContext.startActivity(new Intent(mLoginActivityContext, MainActivity.class));

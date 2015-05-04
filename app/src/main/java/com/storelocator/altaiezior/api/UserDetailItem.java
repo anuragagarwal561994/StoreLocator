@@ -7,8 +7,11 @@ public class UserDetailItem{
     String fname;
     String lname;
     String email;
+    String shop_name;
     Long id;
-    String phone;
+    String mobile;
+    String shop_address;
+
 
     public String getFname() {
         return fname;
@@ -26,7 +29,15 @@ public class UserDetailItem{
         return id;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getShop_name() {
+        return shop_name;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public String getShop_address() {
+        return shop_address;
     }
 }

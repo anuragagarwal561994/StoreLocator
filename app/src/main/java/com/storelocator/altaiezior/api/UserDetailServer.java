@@ -15,10 +15,11 @@ public interface UserDetailServer {
         }
     }
 
-    @POST("/user")
+    @POST("/shopkeeper")
     UpdateUserResponse updateUser( @Query("fname") String fname,
                                    @Query("lname") String lname,
-                                   @Query("email") String email,
-                                   @Query("phone") String phone,
+                                   @Query("shop_name") String shop_name,
+                                   @Query("shop_address") String shop_address,
+                                   @Query("mobile") Long mobile,
                                    @Query("id") Long id);
 }

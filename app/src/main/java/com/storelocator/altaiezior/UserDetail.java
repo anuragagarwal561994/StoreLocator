@@ -34,7 +34,9 @@ public class UserDetail extends FragmentActivity {
     private EditText mFirstName;
     private EditText mLastName;
     private EditText mEmail;
-    private EditText mPhoneNumber;
+    private EditText mMobileNumber;
+    private EditText mShopName;
+    private EditText mShopAddress;
 
     private View mUserDetailForm;
     private View mProgressView;
@@ -50,12 +52,20 @@ public class UserDetail extends FragmentActivity {
         mFirstName = (EditText) findViewById(R.id.first_name);
         mLastName = (EditText) findViewById(R.id.last_name);
         mEmail = (EditText) findViewById(R.id.email);
-        mPhoneNumber = (EditText) findViewById(R.id.phone_number);
+        mMobileNumber = (EditText) findViewById(R.id.mobile_number);
+        mShopAddress = (EditText) findViewById(R.id.shop_address);
+        mShopName = (EditText) findViewById(R.id.shop_name);
 
         mFirstName.setText(userProfilePreference.getString("First Name", null));
         mLastName.setText(userProfilePreference.getString("Last Name", null));
         mEmail.setText(userProfilePreference.getString("Email Address", null));
-        mPhoneNumber.setText(userProfilePreference.getString("Phone Number", null));
+        Long mobileNumber = userProfilePreference.getLong("Mobile Number", 0);
+        if(mobileNumber!=0)
+            mMobileNumber.setText(mobileNumber.toString());
+        else
+            mMobileNumber.setText(null);
+        mShopAddress.setText(userProfilePreference.getString("Shop Address", null));
+        mShopName.setText(userProfilePreference.getString("Shop Name", null));
 
         mUserDetailForm = findViewById(R.id.user_detail_form);
         mProgressView = findViewById(R.id.progressBar);
@@ -66,12 +76,8 @@ public class UserDetail extends FragmentActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Validate
-                //TODO: Remove email from the edit list
-                //TODO: Add phone number field
                 Boolean cancel = false;
-                if (TextUtils.isEmpty(mFirstName.getText().toString()) ||
-                        isAlphabeticString(mFirstName.getText().toString())) {
+                if (isAlphabeticString(mFirstName.getText().toString())) {
                     mFirstName.setError("Invalid First Name");
                     mFirstName.requestFocus();
                     cancel = true;
@@ -81,10 +87,20 @@ public class UserDetail extends FragmentActivity {
                     mLastName.requestFocus();
                     cancel = true;
                 }
-                if (TextUtils.isEmpty(mPhoneNumber.getText().toString()) ||
-                        mPhoneNumber.getText().length()!=10) {
-                    mPhoneNumber.setError("Invalid Phone Number");
-                    mPhoneNumber.requestFocus();
+                if (TextUtils.isEmpty(mMobileNumber.getText().toString()) ||
+                        mMobileNumber.getText().length()!=10) {
+                    mMobileNumber.setError("Invalid Mobile Number");
+                    mMobileNumber.requestFocus();
+                    cancel = true;
+                }
+                if(TextUtils.isEmpty(mShopName.getText().toString())){
+                    mShopName.setError("Invalid Shop Name");
+                    mShopName.requestFocus();
+                    cancel = true;
+                }
+                if(TextUtils.isEmpty(mShopAddress.getText().toString())){
+                    mShopAddress.setError("Invalid Shop Address");
+                    mShopAddress.requestFocus();
                     cancel = true;
                 }
                 if(cancel)
@@ -94,8 +110,9 @@ public class UserDetail extends FragmentActivity {
                         userProfilePreference.getLong("ID", 0),
                         mFirstName.getText().toString(),
                         mLastName.getText().toString(),
-                        mEmail.getText().toString(),
-                        mPhoneNumber.getText().toString(),
+                        Long.parseLong(mMobileNumber.getText().toString()),
+                        mShopName.getText().toString(),
+                        mShopAddress.getText().toString(),
                         currentUserDetailContext
                 ).execute();
             }
