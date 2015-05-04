@@ -56,6 +56,7 @@ public class UserDetail extends FragmentActivity {
 
         mUserDetailForm = findViewById(R.id.user_detail_form);
         mProgressView = findViewById(R.id.progressBar);
+        mEmail.setEnabled(false);
 
         final UserDetail currentUserDetailContext = this;
         Button mButton = (Button) findViewById(R.id.update_user_detail);

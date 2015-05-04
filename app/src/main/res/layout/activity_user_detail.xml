@@ -99,7 +99,7 @@
                             android:inputType="textEmailAddress"
                             android:ems="10"
                             android:id="@+id/email"
-                            android:background="@drawable/edit_text_border"
+                            android:background="#dddddd"
                             android:layout_marginTop="10dp"
                             android:padding="15dp"
                             android:textColor="@color/base_black"
@@ -135,7 +135,8 @@
                             android:padding="15dp"
                             android:textColor="@color/base_black"
                             android:hint="@string/phone_number_hint"
-                            android:textColorHint="@color/edit_text_hint_color" />
+                            android:textColorHint="@color/edit_text_hint_color"
+                            android:maxLength="10" />
 
                     </LinearLayout>
                 </LinearLayout>
